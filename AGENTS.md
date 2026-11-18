@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project architecture
+- Keep public content in separate TanStack leaf routes and shared navigation in the root shell so each page has its own URL and metadata.
+- Embed the existing hosted conversation in an iframe with a permanent external fallback link; do not proxy conversations or copy them into booking data.
+- Keep service availability in a shared browser-safe module; booking stays unavailable until confirmed specialist data and a real submission destination exist.
