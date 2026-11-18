@@ -17,7 +17,7 @@ const INSTRUCTIONS = `Ты бережный помощник, который п�
 
 function parse(text: string): SessionPrep {
   const [, rest = text] = text.split(/РЕЗЮМЕ:/i);
-  const [summary, q = ""] = rest.split(/ВОПРОСЫ:/i);
+  const [summary = "", q = ""] = rest.split(/ВОПРОСЫ:/i);
   const questions = q
     .split("\n")
     .map((l) => l.replace(/^\s*[-•*\d.)]+\s*/, "").trim())
