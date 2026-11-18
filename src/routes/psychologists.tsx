@@ -4,6 +4,7 @@ import { PageIntro } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
 import { pageHead, psychologists, formatKzt } from "@/lib/site";
 import { useState } from "react";
+import { SessionPrep } from "@/components/session-prep";
 export const Route = createFileRoute("/psychologists")({
   head: () =>
     pageHead(
@@ -21,6 +22,7 @@ function Psychologists() {
         указана до записи.
       </PageIntro>
       <section className="container-site pb-20">
+        <SessionPrep />
         {psychologists.length === 0 ? (
           <div className="flex flex-col items-center border-y border-border py-16 text-center">
             <span className="feature-icon">
