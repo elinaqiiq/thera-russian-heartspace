@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as JournalRouteImport } from './routes/journal'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PsychologistsRouteImport } from './routes/psychologists'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TheraRouteImport } from './routes/thera'
 
@@ -26,6 +28,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
   path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JournalRoute = JournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -34,6 +41,11 @@ const PricingRoute = PricingRouteImport.update({
 const PsychologistsRoute = PsychologistsRouteImport.update({
   id: '/psychologists',
   path: '/psychologists',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SupportRoute = SupportRouteImport.update({
@@ -50,16 +62,20 @@ const TheraRoute = TheraRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/journal': typeof JournalRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
   '/thera': typeof TheraRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/journal': typeof JournalRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
   '/thera': typeof TheraRoute
 }
@@ -67,8 +83,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/journal': typeof JournalRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
   '/thera': typeof TheraRoute
 }
@@ -77,24 +95,30 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/how-it-works'
+    | '/journal'
     | '/pricing'
     | '/psychologists'
+    | '/reset-password'
     | '/support'
     | '/thera'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/how-it-works'
+    | '/journal'
     | '/pricing'
     | '/psychologists'
+    | '/reset-password'
     | '/support'
     | '/thera'
   id:
     | '__root__'
     | '/'
     | '/how-it-works'
+    | '/journal'
     | '/pricing'
     | '/psychologists'
+    | '/reset-password'
     | '/support'
     | '/thera'
   fileRoutesById: FileRoutesById
@@ -102,8 +126,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  JournalRoute: typeof JournalRoute
   PricingRoute: typeof PricingRoute
   PsychologistsRoute: typeof PsychologistsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SupportRoute: typeof SupportRoute
   TheraRoute: typeof TheraRoute
 }
@@ -124,6 +150,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -136,6 +169,13 @@ declare module '@tanstack/react-router' {
       path: '/psychologists'
       fullPath: '/psychologists'
       preLoaderRoute: typeof PsychologistsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/support': {
@@ -158,8 +198,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HowItWorksRoute: HowItWorksRoute,
+  JournalRoute: JournalRoute,
   PricingRoute: PricingRoute,
   PsychologistsRoute: PsychologistsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SupportRoute: SupportRoute,
   TheraRoute: TheraRoute,
 }

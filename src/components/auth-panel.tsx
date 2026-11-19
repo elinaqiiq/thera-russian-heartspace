@@ -1,0 +1,59 @@
+import { useState } from 'react';
+import { useRouter } from '@tanstack/react-router';
+import { LovableMark } from '@lovable.dev/cloud-auth-js/react';
+import { lovable } from '@/integrations/lovable';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+
+export function AuthPanel() {
+  const router = useRouter();
+  const [mode, setMode] = useState<'login' | 'signup' | 'reset'>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  async function submit(e: React.FormEvent) {
+    e.preventDefault(); setBusy(true); setMessage('');
+    try {
+      if (mode === 'reset') {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
+        if (error) throw error;
+        setMessage('Ссылка для смены пароля отправлена на почту.');
+      } else if (mode === 'signup') {
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/journal` } });
+        if (error) throw error;
+        if (!data.session) setMessage('Подтверди регистрацию по ссылке в письме.');
+        else await router.invalidate();
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        await router.invalidate();
+      }
+    } catch { setMessage('Не удалось выполнить вход. Проверь данные и подтверждение почты.'); }
+    finally { setBusy(false); }
+  }
+  async function social(provider: 'google' | 'lovable') {
+    setBusy(true); setMessage('');
+    try {
+      const result = await lovable.auth.signInWithOAuth(provider, { redirect_uri: `${window.location.origin}/journal` });
+      if (result.error) { setMessage('Не удалось войти. Попробуй позже.'); return; }
+      if (!result.redirected) await router.invalidate();
+    } catch { setMessage('Не удалось войти. Попробуй позже.'); }
+    finally { setBusy(false); }
+  }
+  return <div className="max-w-md py-8">
+    <h2 className="text-xl font-semibold">Твой личный дневник</h2>
+    <p className="mt-3 text-sm leading-7 text-muted-foreground">Войди, чтобы сохранять записи. Они видны только тебе и не передаются психологу.</p>
+    <form onSubmit={submit} className="mt-6 space-y-4">
+      <label className="block text-sm">Электронная почта<input className="field mt-2" type="email" autoComplete="email" required maxLength={255} value={email} onChange={e => setEmail(e.target.value)} /></label>
+      {mode !== 'reset' && <label className="block text-sm">Пароль<input className="field mt-2" type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required minLength={8} maxLength={100} value={password} onChange={e => setPassword(e.target.value)} /></label>}
+      <Button variant="hero" disabled={busy} className="w-full">{busy ? 'Подожди…' : mode === 'signup' ? 'Создать аккаунт' : mode === 'reset' ? 'Отправить ссылку' : 'Войти'}</Button>
+    </form>
+    <div className="mt-4 flex flex-wrap gap-2"><Button variant="link" onClick={() => { setMode(mode === 'signup' ? 'login' : 'signup'); setMessage(''); }}>{mode === 'signup' ? 'Уже есть аккаунт' : 'Регистрация'}</Button><Button variant="link" onClick={() => { setMode('reset'); setMessage(''); }}>Забыли пароль?</Button></div>
+    <div className="mt-4 grid gap-3">
+      <Button className="google-signin" variant="outline" disabled={busy} onClick={() => social('google')}><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>Продолжить с Google</Button>
+      <Button variant="outline" disabled={busy} onClick={() => social('lovable')}><LovableMark />Продолжить с Lovable</Button>
+    </div>
+    {message && <p role="status" className="mt-5 text-sm text-accent">{message}</p>}
+  </div>;
+}
