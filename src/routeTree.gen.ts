@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as JournalRouteImport } from './routes/journal'
+import { Route as PracticesRouteImport } from './routes/practices'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PsychologistsRouteImport } from './routes/psychologists'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as TestsRouteImport } from './routes/tests'
 import { Route as TheraRouteImport } from './routes/thera'
 
 const IndexRoute = IndexRouteImport.update({
@@ -31,6 +33,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
 const JournalRoute = JournalRouteImport.update({
   id: '/journal',
   path: '/journal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PracticesRoute = PracticesRouteImport.update({
+  id: '/practices',
+  path: '/practices',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -53,6 +60,11 @@ const SupportRoute = SupportRouteImport.update({
   path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TestsRoute = TestsRouteImport.update({
+  id: '/tests',
+  path: '/tests',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TheraRoute = TheraRouteImport.update({
   id: '/thera',
   path: '/thera',
@@ -63,20 +75,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
+  '/practices': typeof PracticesRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
+  '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
+  '/practices': typeof PracticesRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
+  '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
 }
 export interface FileRoutesById {
@@ -84,10 +100,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
+  '/practices': typeof PracticesRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
+  '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
 }
 export interface FileRouteTypes {
@@ -96,30 +114,36 @@ export interface FileRouteTypes {
     | '/'
     | '/how-it-works'
     | '/journal'
+    | '/practices'
     | '/pricing'
     | '/psychologists'
     | '/reset-password'
     | '/support'
+    | '/tests'
     | '/thera'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/how-it-works'
     | '/journal'
+    | '/practices'
     | '/pricing'
     | '/psychologists'
     | '/reset-password'
     | '/support'
+    | '/tests'
     | '/thera'
   id:
     | '__root__'
     | '/'
     | '/how-it-works'
     | '/journal'
+    | '/practices'
     | '/pricing'
     | '/psychologists'
     | '/reset-password'
     | '/support'
+    | '/tests'
     | '/thera'
   fileRoutesById: FileRoutesById
 }
@@ -127,10 +151,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HowItWorksRoute: typeof HowItWorksRoute
   JournalRoute: typeof JournalRoute
+  PracticesRoute: typeof PracticesRoute
   PricingRoute: typeof PricingRoute
   PsychologistsRoute: typeof PsychologistsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SupportRoute: typeof SupportRoute
+  TestsRoute: typeof TestsRoute
   TheraRoute: typeof TheraRoute
 }
 
@@ -155,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/journal'
       fullPath: '/journal'
       preLoaderRoute: typeof JournalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/practices': {
+      id: '/practices'
+      path: '/practices'
+      fullPath: '/practices'
+      preLoaderRoute: typeof PracticesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -185,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tests': {
+      id: '/tests'
+      path: '/tests'
+      fullPath: '/tests'
+      preLoaderRoute: typeof TestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/thera': {
       id: '/thera'
       path: '/thera'
@@ -199,10 +239,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HowItWorksRoute: HowItWorksRoute,
   JournalRoute: JournalRoute,
+  PracticesRoute: PracticesRoute,
   PricingRoute: PricingRoute,
   PsychologistsRoute: PsychologistsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SupportRoute: SupportRoute,
+  TestsRoute: TestsRoute,
   TheraRoute: TheraRoute,
 }
 export const routeTree = rootRouteImport
