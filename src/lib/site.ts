@@ -27,6 +27,15 @@ export function telegramChatUrl(username: string) {
   return `https://t.me/${username}`;
 }
 
+export function telegramBookingUrl(username: string) {
+  const url = new URL(telegramChatUrl(username));
+  url.searchParams.set(
+    "text",
+    "Здравствуйте! Хочу записаться на консультацию. Какие есть свободные окна?",
+  );
+  return url.toString();
+}
+
 export const bookingSubmissionsEnabled = psychologists.length > 0;
 export const servicePricing = { chatKzt: 0, consultationIncluded: false };
 export function formatKzt(value: number) {

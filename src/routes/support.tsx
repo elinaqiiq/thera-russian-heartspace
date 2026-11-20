@@ -36,7 +36,7 @@ function Support() {
             },
             {
               q: "Передаётся ли переписка психологу?",
-              a: "Переписка с Thera автоматически в заявку не добавляется. Сайт не копирует разговор в сведения о записи.",
+              a: "Запись в Telegram открывается с обычным приветствием. Сводку и выбранный фрагмент переписки можешь отправить психологу самостоятельно.",
             },
             {
               q: "Куда обратиться по вопросам сайта?",
@@ -50,8 +50,24 @@ function Support() {
               <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">{f.a}</p>
             </details>
           ))}
+          <section id="data-and-privacy" className="scroll-mt-24 py-6">
+            <h2 className="text-lg font-semibold">Как используются данные</h2>
+            <ul className="mt-4 list-disc space-y-3 pl-5 text-sm leading-7 text-muted-foreground">
+              <li>
+                Переписку в чате обрабатывает Botpress. В личном профиле TherapyAI этот чат не
+                отображается.
+              </li>
+              <li>
+                По кнопке «Составить сводку» выбранный текст уходит на обработку ИИ через Lovable.
+                На сайте черновик живёт на странице. Кнопка «Очистить текст» удаляет его со
+                страницы.
+              </li>
+              <li>Записи дневника хранятся в твоём аккаунте. Удалить запись можно в дневнике.</li>
+              <li>Психолог увидит только то, что ты отправишь ему в Telegram.</li>
+            </ul>
+          </section>
         </div>
-        <aside>
+        <aside id="urgent-help" className="scroll-mt-24">
           <ShieldCheck size={27} className="text-accent" />
           <h2 className="mt-5 text-lg font-semibold">Если нужна срочная помощь</h2>
           <p className="mt-3 text-sm leading-7 text-muted-foreground">

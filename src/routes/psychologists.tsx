@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Heart, Clock, Send, Video } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
-import { pageHead, psychologists, formatKzt, telegramChatUrl } from "@/lib/site";
+import { pageHead, psychologists, formatKzt, telegramBookingUrl } from "@/lib/site";
 import { SessionPrep } from "@/components/session-prep";
 export const Route = createFileRoute("/psychologists")({
   head: () =>
@@ -19,8 +19,7 @@ function Psychologists() {
         Консультация с психологом — отдельный платный формат поддержки. Стоимость в тенге будет
         указана до записи.
       </PageIntro>
-      <section className="container-site pb-20">
-        <SessionPrep />
+      <section id="consultation" className="container-site scroll-mt-24 pb-20">
         {psychologists.length === 0 ? (
           <div className="flex flex-col items-center border-y border-border py-16 text-center">
             <span className="feature-icon">
@@ -64,13 +63,17 @@ function Psychologists() {
                 </p>
                 <Button variant="hero" asChild>
                   <a
-                    href={telegramChatUrl(p.telegramUsername)}
+                    href={telegramBookingUrl(p.telegramUsername)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <Send size={16} /> Записаться в Telegram
                   </a>
                 </Button>
+                <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">
+                  Отправь сообщение в Telegram и дождись подтверждения даты и времени от психолога.
+                  Условия переноса и отмены можно уточнить в чате.
+                </p>
                 <p className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
                   <span>@{p.telegramUsername}</span>
                   <a href={`tel:${p.phone.number}`} className="underline underline-offset-4">
@@ -81,6 +84,7 @@ function Psychologists() {
             ))}
           </div>
         )}
+        <SessionPrep />
         <p className="mt-8 max-w-2xl text-xs leading-6 text-muted-foreground">
           Чат с Thera бесплатен и не включает консультацию психолога. Переписка с Thera
           автоматически в заявку не добавляется. Оплата на сайте пока не подключена.
