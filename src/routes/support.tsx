@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink, ShieldCheck } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
-import { pageHead, THERA_CHAT_URL } from "@/lib/site";
+import { bookingSubmissionsEnabled, pageHead, THERA_CHAT_URL } from "@/lib/site";
 export const Route = createFileRoute("/support")({
   head: () =>
     pageHead(
@@ -30,7 +30,9 @@ function Support() {
             },
             {
               q: "Можно ли уже записаться на консультацию?",
-              a: "Пока запись недоступна. Она откроется после появления подтверждённых специалистов и настройки отправки заявок.",
+              a: bookingSubmissionsEnabled
+                ? "На странице «Психологи» указана стоимость консультации. Кнопка записи откроет личный чат психолога в Telegram."
+                : "Пока запись недоступна. Она откроется после появления подтверждённых специалистов и настройки отправки заявок.",
             },
             {
               q: "Передаётся ли переписка психологу?",

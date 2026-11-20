@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const CONTACT_PHONE = '+77770125648';
-export const CONTACT_WHATSAPP = 'https://wa.me/77770125648';
 export const moods = ['Очень тяжело', 'Тяжело', 'Нейтрально', 'Хорошо', 'Очень хорошо'];
 export const emotions = ['Тревога', 'Грусть', 'Радость', 'Злость', 'Усталость', 'Спокойствие'];
 export const entrySchema = z.object({

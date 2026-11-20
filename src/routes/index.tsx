@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, MessageCircle, Heart, Sparkles, ArrowUpRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { pageHead } from "@/lib/site";
+import { bookingSubmissionsEnabled, pageHead } from "@/lib/site";
 import mascot from "@/assets/thera-cat.asset.json";
 export const Route = createFileRoute("/")({
   head: () =>
@@ -99,8 +99,9 @@ function Index() {
             </div>
             <h3 className="mt-6 text-xl font-semibold">Помощь психолога</h3>
             <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">
-              Профессиональная поддержка и личная консультация. Запись откроется после подключения
-              специалистов.
+              {bookingSubmissionsEnabled
+                ? "Профессиональная поддержка и личная консультация. Запись через Telegram."
+                : "Профессиональная поддержка и личная консультация. Запись откроется после подключения специалистов."}
             </p>
             <Button asChild variant="link" className="mt-5 h-auto px-0 text-accent">
               <Link to="/psychologists">

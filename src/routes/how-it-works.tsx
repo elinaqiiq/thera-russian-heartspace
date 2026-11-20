@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, MessageCircle, Heart, Compass } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
-import { pageHead } from "@/lib/site";
+import { bookingSubmissionsEnabled, pageHead } from "@/lib/site";
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
     pageHead(
@@ -33,7 +33,9 @@ function HowItWorks() {
             {
               icon: Heart,
               title: "Обратись к психологу",
-              text: "Для профессиональной помощи можно выбрать специалиста, когда запись откроется. Стоимость будет видна до заявки.",
+              text: bookingSubmissionsEnabled
+                ? "Посмотри стоимость консультации и договорись о времени с психологом в Telegram."
+                : "Для профессиональной помощи можно выбрать специалиста, когда запись откроется. Стоимость будет видна до заявки.",
             },
           ].map((step, i) => (
             <article className="soft-card p-7" key={step.title}>

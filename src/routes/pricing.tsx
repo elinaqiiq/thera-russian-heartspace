@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, ArrowRight, MessageCircle, Heart } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
-import { pageHead } from "@/lib/site";
+import { bookingSubmissionsEnabled, pageHead } from "@/lib/site";
 export const Route = createFileRoute("/pricing")({
   head: () =>
     pageHead(
@@ -52,7 +52,7 @@ function Pricing() {
             {[
               "Встреча с реальным специалистом",
               "Цена в тенге до оформления заявки",
-              "Запись скоро откроется",
+              bookingSubmissionsEnabled ? "Запись через Telegram" : "Запись скоро откроется",
             ].map((t) => (
               <li key={t} className="flex gap-3">
                 <Check size={17} className="text-accent" />

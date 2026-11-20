@@ -1,20 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Heart, Clock, Video } from "lucide-react";
+import { Heart, Clock, Send, Video } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
-import { pageHead, psychologists, formatKzt } from "@/lib/site";
-import { useState } from "react";
+import { pageHead, psychologists, formatKzt, telegramChatUrl } from "@/lib/site";
 import { SessionPrep } from "@/components/session-prep";
 export const Route = createFileRoute("/psychologists")({
   head: () =>
     pageHead(
       "Психологи",
-      "Платные консультации с реальными психологами. Запись скоро откроется; стоимость будет доступна до заявки.",
+      "Платные консультации с психологами. Стоимость в тенге и запись через Telegram.",
     ),
   component: Psychologists,
 });
 function Psychologists() {
-  const [selected, setSelected] = useState<string | null>(null);
   return (
     <>
       <PageIntro eyebrow="Профессиональная помощь" title="Не обязательно справляться в одиночку">
@@ -47,53 +45,41 @@ function Psychologists() {
           <div className="grid gap-5 md:grid-cols-2">
             {psychologists.map((p) => (
               <article className="soft-card p-7" key={p.id}>
-                <img
-                  src={p.photo}
-                  alt={p.name}
-                  className="mb-5 h-28 w-28 rounded-2xl object-cover"
-                />
-                <h2 className="text-xl font-semibold">{p.name}</h2>
-                <p className="mt-3 text-muted-foreground">{p.qualification}</p>
-                <p className="mt-3 text-sm">{p.topics.join(", ")}</p>
+                {p.photo && (
+                  <img
+                    src={p.photo}
+                    alt={p.name ?? ""}
+                    className="mb-5 h-28 w-28 rounded-2xl object-cover"
+                  />
+                )}
+                <h2 className="text-xl font-semibold">{p.name ?? "Консультация с психологом"}</h2>
+                {p.qualification && <p className="mt-3 text-muted-foreground">{p.qualification}</p>}
+                {p.topics?.length ? <p className="mt-3 text-sm">{p.topics.join(", ")}</p> : null}
                 <p className="mt-3 text-sm text-muted-foreground">
-                  {p.language} · {p.format} · {p.durationMinutes} мин.
+                  {[p.language, p.format, `${p.durationMinutes} мин.`].filter(Boolean).join(" · ")}
                 </p>
                 <p className="my-5 text-xl font-semibold">
                   {formatKzt(p.priceKzt)}{" "}
-                  <span className="text-xs text-muted-foreground">
-                    за консультацию, оплачивается отдельно
-                  </span>
+                  <span className="text-sm text-muted-foreground">за {p.durationMinutes} мин.</span>
                 </p>
-                <Button variant="hero" onClick={() => setSelected(p.id)}>
-                  Оставить заявку
+                <Button variant="hero" asChild>
+                  <a
+                    href={telegramChatUrl(p.telegramUsername)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Send size={16} /> Записаться в Telegram
+                  </a>
                 </Button>
+                <p className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                  <span>@{p.telegramUsername}</span>
+                  <a href={`tel:${p.phone.number}`} className="underline underline-offset-4">
+                    {p.phone.display}
+                  </a>
+                </p>
               </article>
             ))}
           </div>
-        )}
-        {selected && (
-          <section className="mt-10 max-w-xl">
-            <h2 className="text-xl font-semibold">Заявка на консультацию</h2>
-            <p className="my-4 text-sm text-muted-foreground">
-              Демо-форма. Отправка заявок пока не настроена; данные не отправляются и не
-              сохраняются.
-            </p>
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <label className="block text-sm">
-                Имя
-                <input disabled maxLength={100} className="field mt-2" />
-              </label>
-              <label className="block text-sm">
-                Контакт
-                <input disabled maxLength={255} className="field mt-2" />
-              </label>
-              <label className="block text-sm">
-                Удобное время
-                <input disabled maxLength={200} className="field mt-2" />
-              </label>
-              <Button disabled>Отправка недоступна</Button>
-            </form>
-          </section>
         )}
         <p className="mt-8 max-w-2xl text-xs leading-6 text-muted-foreground">
           Чат с Thera бесплатен и не включает консультацию психолога. Переписка с Thera
