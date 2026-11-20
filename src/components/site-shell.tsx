@@ -28,7 +28,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
-          <span className="hidden items-center gap-2 text-xs text-muted-foreground lg:flex">
+          <span className="hidden items-center gap-2 text-xs text-muted-foreground xl:flex">
             <span className="status-dot" /> Пространство для тебя
           </span>
           <Button

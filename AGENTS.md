@@ -33,3 +33,4 @@ use the editor.
 - Keep public content in separate TanStack leaf routes and shared navigation in the root shell so each page has its own URL and metadata.
 - Embed the existing hosted conversation in an iframe with a permanent external fallback link; do not proxy conversations or copy them into booking data.
 - Keep service availability in a shared browser-safe module; booking stays unavailable until confirmed specialist data and a real submission destination exist.
+- Keep breathing timing and questionnaire scoring in browser-safe wellbeing utilities with tests; run practices and transient questionnaire answers locally without saving health responses.

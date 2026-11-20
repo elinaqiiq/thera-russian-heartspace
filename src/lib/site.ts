@@ -21,6 +21,8 @@ export const navItems = [
   { to: "/how-it-works", label: "Как это работает" },
   { to: "/thera", label: "Thera" },
   { to: "/psychologists", label: "Психологи" },
+  { to: "/practices", label: "Практики" },
+  { to: "/tests", label: "Тесты" },
   { to: "/pricing", label: "Тарифы" },
   { to: "/support", label: "Поддержка" },
 ] as const;

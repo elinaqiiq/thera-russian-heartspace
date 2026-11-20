@@ -333,6 +333,29 @@
   border: 0;
   background: var(--card);
 }
+.breath-disc {
+  position: absolute;
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 1.75rem;
+  transition: transform 1s linear;
+}
+.breath-in { transform: scale(1.1); }
+.breath-out { transform: scale(0.85); }
+.wellbeing-progress { height: 4px; appearance: none; border: 0; background: var(--secondary); }
+.wellbeing-progress::-webkit-progress-bar { background: var(--secondary); }
+.wellbeing-progress::-webkit-progress-value { background: var(--accent); }
+.wellbeing-progress::-moz-progress-bar { background: var(--accent); }
+@media (prefers-reduced-motion: reduce) {
+  .breath-disc { transition: none; transform: none; }
+}
 @media (max-width: 767px) {
   .container-site {
     width: calc(100% - 2.5rem);
