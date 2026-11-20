@@ -1,14 +1,40 @@
-# Welcome to your Lovable project
+# Thera Russian Heartspace
+
+Создай адаптивный русскоязычный сайт TherapyAI на основе моего прототипа. Если я приложила скриншоты, используй их как визуальный ориентир. Сохрани тёмно-фиолетовую палитру, синие акценты, мягкие скругления и структуру меню «Как это работает», «Thera», «Психологи», «Тарифы», «Поддержка».
+
+На первом экране поставь заголовок «Что тебя сейчас беспокоит?» и короткий текст «Можно начать с того, о чём проще говорить». Добавь две кнопки: основную «Поговорить с Thera» и дополнительную «Записаться к психологу».
+
+1. Чат с Thera
+
+Thera — мой готовый ИИ-собеседник для эмоциональной поддержки в Botpress. Подключи его на странице «Thera». Если чат по ссылке можно встроить, покажи его внутри страницы. Если встраивание заблокировано, кнопка «Открыть чат Thera» должна открывать эту же ссылку в новой вкладке. Используй моего существующего агента Botpress без нового API-ключа.
+
+Рядом с чатом покажи короткое пояснение: «Thera — ИИ-собеседник. Она может помочь тебе выговориться и сформулировать, что тебя беспокоит. За профессиональной помощью можно обратиться к психологу».
+
+2. Консультация с психологом
+
+Сделай отдельный раздел для платной записи к реальному психологу. В карточке специалиста предусмотрены имя, фото, квалификация, темы консультаций, язык, формат встречи, длительность и цена в тенге. Используй только подтверждённые данные. Если я ещё не предоставила специалистов и цены, покажи состояние «Запись скоро откроется».
+
+Для подключённого психолога добавь кнопку «Оставить заявку». Пользователь указывает имя, контакт и удобное время. Если отправка заявок ещё не настроена, обозначь форму как демо и отключи отправку. Платёжную систему пока не подключай. Перед реальной записью пользователь должен видеть стоимость и понимать, что консультация оплачивается отдельно.
+
+3. Тарифы и навигация
+
+Покажи два варианта: «Чат с Thera — бесплатно» и «Консультация с психологом — оплачивается отдельно». Переписку с Thera автоматически в заявку не добавляй. Сделай все кнопки навигации рабочими и проверь мобильную версию.
+
+Ссылка на мой опубликованный чат Botpress:
+
+https://vdk-viber-runtime-prod.bot.botpress.host/edge/?botId=7ad7759a-ed1b-49d9-83c6-6555daa01224
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://thera-russian-heartspace.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/42a402b5-b406-5326-b9c4-f2a27161d47e).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +46,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
