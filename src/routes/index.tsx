@@ -73,7 +73,7 @@ function Index() {
 
   return (
     <>
-      <nav className="container-site pt-5 sm:pt-7" aria-label="Возможности Thera">
+      <nav className="container-site home-shortcuts pt-5 sm:pt-7" aria-label="Возможности Thera">
         <p className="mb-3 text-sm font-bold">Возможности Thera</p>
         <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
           {tools.map(({ to, icon: Icon, title, description, tone, ...target }) => (
@@ -93,7 +93,7 @@ function Index() {
       </nav>
       <section className="container-site home-hero" aria-labelledby="hero-heading">
         <div className="home-hero-content">
-          <p className="eyebrow">Бесплатный чат для эмоциональной поддержки</p>
+          <p className="eyebrow hero-eyebrow">Бесплатный чат для эмоциональной поддержки</p>
           <h1 id="hero-heading" className="hero-title mt-5">
             Что тебя сейчас <span>беспокоит?</span>
           </h1>
@@ -128,12 +128,29 @@ function Index() {
           <span className="home-cat-moon" aria-hidden="true">
             <MoonStar size={24} />
           </span>
-          <span className="home-cat-cloud" aria-hidden="true" />
         </div>
       </section>
 
-      <section className="container-site py-12 md:py-16" aria-labelledby="consultation-heading">
-        <div className="soft-card consultation-callout home-consultation">
+      <section className="container-site home-next" aria-label="Практика и консультация">
+        <article className="home-practice" aria-labelledby="practice-heading">
+          <div className="home-practice-content">
+            <span className="feature-icon">
+              <Wind size={22} aria-hidden="true" />
+            </span>
+            <h2 id="practice-heading" className="section-title mt-4">
+              Минута для себя
+            </h2>
+            <p className="mt-3 max-w-xs text-sm leading-6 text-muted-foreground">
+              Дыхание по таймеру, когда хочется остановиться и сделать паузу.
+            </p>
+            <Button asChild variant="soft" className="mt-5 min-h-11">
+              <Link to="/practices">
+                Открыть практику <ArrowRight aria-hidden="true" />
+              </Link>
+            </Button>
+          </div>
+        </article>
+        <article className="soft-card home-consultation" aria-labelledby="consultation-heading">
           <div>
             <span className="feature-icon mb-5">
               <Heart size={22} aria-hidden="true" />
@@ -146,7 +163,7 @@ function Index() {
               встречу сводку того, что хочется обсудить.
             </p>
           </div>
-          <div className="flex flex-col items-start gap-3 md:items-end">
+          <div className="flex flex-col items-start gap-3">
             {bookingSubmissionsEnabled && specialist && (
               <p className="text-sm text-muted-foreground">
                 <strong className="text-base text-foreground">
@@ -161,7 +178,7 @@ function Index() {
               </Link>
             </Button>
           </div>
-        </div>
+        </article>
       </section>
     </>
   );

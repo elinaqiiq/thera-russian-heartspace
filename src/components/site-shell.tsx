@@ -23,7 +23,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           }
         }}
       >
-        <div className="container-site flex h-18 items-center justify-between gap-3 min-[1100px]:gap-5">
+        <div className="container-site site-header-bar flex items-center justify-between gap-3 min-[1100px]:gap-5">
           <Link to="/" className="brand" onClick={() => setOpen(false)}>
             <span className="brand-icon">
               <Sparkles size={20} />

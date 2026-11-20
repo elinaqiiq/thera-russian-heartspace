@@ -23,7 +23,14 @@ function savedTheme() {
 }
 
 function applyTheme(theme: Theme) {
-  document.documentElement.classList.toggle("dark", theme === "dark");
+  const root = document.documentElement;
+  const dark = theme === "dark";
+  if (root.classList.contains("dark") === dark) return;
+  root.classList.add("theme-switching");
+  root.classList.toggle("dark", dark);
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => root.classList.remove("theme-switching")),
+  );
 }
 
 export function ThemeToggle() {
