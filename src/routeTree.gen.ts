@@ -19,6 +19,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TestsRouteImport } from './routes/tests'
 import { Route as TheraRouteImport } from './routes/thera'
+import { Route as ApiExcelSyncRouteImport } from './routes/api/excel-sync'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -70,6 +71,11 @@ const TheraRoute = TheraRouteImport.update({
   path: '/thera',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiExcelSyncRoute = ApiExcelSyncRouteImport.update({
+  id: '/api/excel-sync',
+  path: '/api/excel-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
+  '/api/excel-sync': typeof ApiExcelSyncRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
+  '/api/excel-sync': typeof ApiExcelSyncRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
+  '/api/excel-sync': typeof ApiExcelSyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/tests'
     | '/thera'
+    | '/api/excel-sync'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/tests'
     | '/thera'
+    | '/api/excel-sync'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/tests'
     | '/thera'
+    | '/api/excel-sync'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +170,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TestsRoute: typeof TestsRoute
   TheraRoute: typeof TheraRoute
+  ApiExcelSyncRoute: typeof ApiExcelSyncRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TheraRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/excel-sync': {
+      id: '/api/excel-sync'
+      path: '/api/excel-sync'
+      fullPath: '/api/excel-sync'
+      preLoaderRoute: typeof ApiExcelSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -246,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   TestsRoute: TestsRoute,
   TheraRoute: TheraRoute,
+  ApiExcelSyncRoute: ApiExcelSyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

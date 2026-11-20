@@ -1,3 +1,4 @@
+import { ConsultationRequest } from "@/components/consultation-request";
 import { createFileRoute } from "@tanstack/react-router";
 import { Heart, Clock, Send, Video } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
@@ -91,6 +92,7 @@ function Psychologists() {
                       {p.phone.display}
                     </a>
                   </p>
+                  <ConsultationRequest specialistId={p.id} />
                 </div>
               </article>
             ))}
