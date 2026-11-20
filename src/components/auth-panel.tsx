@@ -5,7 +5,7 @@ import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
-export function AuthPanel() {
+export function AuthPanel({ booking = false }: { booking?: boolean }) {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
   const [email, setEmail] = useState("");
@@ -14,6 +14,9 @@ export function AuthPanel() {
   const [message, setMessage] = useState("");
   const [showResend, setShowResend] = useState(false);
   const emailField = useRef<HTMLInputElement>(null);
+  const journalPath = booking ? "/journal?next=consultation" : "/journal";
+  const resetPath = booking ? "/reset-password?next=consultation" : "/reset-password";
+
   function authError(error: unknown) {
     const code = typeof error === "object" && error && "code" in error ? error.code : null;
     if (code === "email_not_confirmed") {
@@ -24,6 +27,8 @@ export function AuthPanel() {
       return "Слишком много запросов. Подожди немного и попробуй снова.";
     if (code === "signup_disabled" || code === "email_provider_disabled")
       return "Регистрация по email сейчас недоступна.";
+    if (code === "email_address_not_authorized")
+      return "Сервис регистрации пока не может отправить письмо на этот адрес.";
     if (code === "weak_password")
       return "Пароль не соответствует требованиям. Попробуй более сложный.";
     if (code === "invalid_credentials") return "Проверь email и пароль или восстанови доступ.";
@@ -36,15 +41,15 @@ export function AuthPanel() {
     try {
       if (mode === "reset") {
         const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-          redirectTo: `${window.location.origin}/reset-password`,
+          redirectTo: `${window.location.origin}${resetPath}`,
         });
         if (error) throw error;
-        setMessage("Ссылка для смены пароля отправлена на почту.");
+        setMessage("Если аккаунт есть, на этот адрес придёт ссылка для смены пароля.");
       } else if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password,
-          options: { emailRedirectTo: `${window.location.origin}/journal` },
+          options: { emailRedirectTo: `${window.location.origin}${journalPath}` },
         });
         if (error) throw error;
         if (!data.session) {
@@ -72,7 +77,7 @@ export function AuthPanel() {
       const { error } = await supabase.auth.resend({
         type: "signup",
         email: email.trim(),
-        options: { emailRedirectTo: `${window.location.origin}/journal` },
+        options: { emailRedirectTo: `${window.location.origin}${journalPath}` },
       });
       if (error) throw error;
       setMessage(
@@ -90,7 +95,7 @@ export function AuthPanel() {
     setMessage("");
     try {
       const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: `${window.location.origin}/journal`,
+        redirect_uri: `${window.location.origin}${journalPath}`,
       });
       if (result.error) {
         setMessage("Не удалось войти. Попробуй позже.");
@@ -137,8 +142,8 @@ export function AuthPanel() {
               type="password"
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
               required
-              minLength={8}
-              maxLength={100}
+              minLength={mode === "signup" ? 8 : undefined}
+              maxLength={mode === "signup" ? 72 : undefined}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

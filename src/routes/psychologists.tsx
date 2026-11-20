@@ -1,6 +1,6 @@
 import { PsychologistTelegramLink } from "@/components/psychologist-telegram-link";
 import { ConsultationRequest } from "@/components/consultation-request";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Heart, Clock, Video } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
 import { pageHead, psychologists, formatKzt } from "@/lib/site";
@@ -17,7 +17,7 @@ function Psychologists() {
   return (
     <>
       <PageIntro eyebrow="Профессиональная помощь" title="Консультация с психологом">
-        Узнай стоимость встречи и договорись об удобном времени через Telegram.
+        Предложи удобное время на сайте или свяжись с психологом в Telegram.
       </PageIntro>
       <section id="consultation" className="container-site scroll-mt-24 pb-20">
         {psychologists.length === 0 ? (
@@ -63,8 +63,8 @@ function Psychologists() {
                       .join(" · ")}
                   </p>
                   <p className="mt-4 max-w-lg text-sm leading-6 text-muted-foreground">
-                    Психолог подтвердит дату и время в Telegram. Там же можно уточнить условия
-                    переноса и отмены.
+                    После заявки проверь статус в аккаунте. Уточнить детали встречи или договориться
+                    о переносе можно в Telegram.
                   </p>
                 </div>
                 <div className="grid gap-3 md:min-w-62">
@@ -85,6 +85,14 @@ function Psychologists() {
                     </a>
                   </p>
                   <ConsultationRequest specialistId={p.id} />
+                  <Link
+                    to="/journal"
+                    search={{}}
+                    hash="my-consultations"
+                    className="text-sm underline"
+                  >
+                    Мои заявки
+                  </Link>
                 </div>
               </article>
             ))}

@@ -57,13 +57,13 @@ function Index() {
           <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <Button asChild variant="hero" size="xl">
               <Link to="/thera">
-                <MessageCircle aria-hidden="true" /> Поговорить с Thera{" "}
+                <MessageCircle aria-hidden="true" /> Мне нужна поддержка сейчас{" "}
                 <ArrowUpRight aria-hidden="true" />
               </Link>
             </Button>
             <Button asChild variant="soft" size="xl">
               <Link to="/psychologists">
-                К психологу <ArrowRight aria-hidden="true" />
+                Хочу поговорить с психологом <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
           </div>

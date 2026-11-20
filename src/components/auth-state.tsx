@@ -4,12 +4,18 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-const AuthContext = createContext<{ user: User | null; ready: boolean }>({
+const AuthContext = createContext<{
+  user: User | null;
+  ready: boolean;
+  recoveryUserId: string | null;
+}>({
   user: null,
   ready: false,
+  recoveryUserId: null,
 });
 export function AuthState({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [recoveryUserId, setRecoveryUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -18,7 +24,10 @@ export function AuthState({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") setRecoveryUserId(session?.user.id ?? null);
+      if (event === "SIGNED_OUT" || event === "USER_UPDATED") setRecoveryUserId(null);
       if (
+        event === "PASSWORD_RECOVERY" ||
         event === "INITIAL_SESSION" ||
         event === "SIGNED_IN" ||
         event === "SIGNED_OUT" ||
@@ -41,6 +50,8 @@ export function AuthState({ children }: { children: ReactNode }) {
       subscription.unsubscribe();
     };
   }, [router, queryClient]);
-  return <AuthContext.Provider value={{ user, ready }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, ready, recoveryUserId }}>{children}</AuthContext.Provider>
+  );
 }
 export const useAuthState = () => useContext(AuthContext);
