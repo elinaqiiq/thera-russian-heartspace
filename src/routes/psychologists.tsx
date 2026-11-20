@@ -15,9 +15,8 @@ export const Route = createFileRoute("/psychologists")({
 function Psychologists() {
   return (
     <>
-      <PageIntro eyebrow="Профессиональная помощь" title="Не обязательно справляться в одиночку">
-        Консультация с психологом — отдельный платный формат поддержки. Стоимость в тенге будет
-        указана до записи.
+      <PageIntro eyebrow="Профессиональная помощь" title="Консультация с психологом">
+        Узнай стоимость встречи и договорись об удобном времени через Telegram.
       </PageIntro>
       <section id="consultation" className="container-site scroll-mt-24 pb-20">
         {psychologists.length === 0 ? (
@@ -41,45 +40,58 @@ function Psychologists() {
             </div>
           </div>
         ) : (
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5">
             {psychologists.map((p) => (
-              <article className="soft-card p-7" key={p.id}>
-                {p.photo && (
-                  <img
-                    src={p.photo}
-                    alt={p.name ?? ""}
-                    className="mb-5 h-28 w-28 rounded-2xl object-cover"
-                  />
-                )}
-                <h2 className="text-xl font-semibold">{p.name ?? "Консультация с психологом"}</h2>
-                {p.qualification && <p className="mt-3 text-muted-foreground">{p.qualification}</p>}
-                {p.topics?.length ? <p className="mt-3 text-sm">{p.topics.join(", ")}</p> : null}
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {[p.language, p.format, `${p.durationMinutes} мин.`].filter(Boolean).join(" · ")}
-                </p>
-                <p className="my-5 text-xl font-semibold">
-                  {formatKzt(p.priceKzt)}{" "}
-                  <span className="text-sm text-muted-foreground">за {p.durationMinutes} мин.</span>
-                </p>
-                <Button variant="hero" asChild>
-                  <a
-                    href={telegramBookingUrl(p.telegramUsername)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Send size={16} /> Записаться в Telegram
-                  </a>
-                </Button>
-                <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">
-                  Отправь сообщение в Telegram и дождись подтверждения даты и времени от психолога.
-                  Условия переноса и отмены можно уточнить в чате.
-                </p>
-                <p className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  <span>@{p.telegramUsername}</span>
-                  <a href={`tel:${p.phone.number}`} className="underline underline-offset-4">
-                    {p.phone.display}
-                  </a>
-                </p>
+              <article className="soft-card consultation-callout" key={p.id}>
+                <div>
+                  {p.photo && (
+                    <img
+                      src={p.photo}
+                      alt={p.name ?? ""}
+                      className="mb-5 h-28 w-28 rounded-2xl object-cover"
+                    />
+                  )}
+                  <h2 className="text-xl font-semibold">{p.name ?? "Консультация с психологом"}</h2>
+                  {p.qualification && (
+                    <p className="mt-3 text-muted-foreground">{p.qualification}</p>
+                  )}
+                  {p.topics?.length ? <p className="mt-3 text-sm">{p.topics.join(", ")}</p> : null}
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {[p.language, p.format, `${p.durationMinutes} мин.`]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                  <p className="mt-4 max-w-lg text-sm leading-6 text-muted-foreground">
+                    Психолог подтвердит дату и время в Telegram. Там же можно уточнить условия
+                    переноса и отмены.
+                  </p>
+                </div>
+                <div className="grid gap-3 md:min-w-62">
+                  <p className="flex flex-wrap items-baseline gap-x-2 font-display text-3xl font-semibold">
+                    {formatKzt(p.priceKzt)}{" "}
+                    <span className="text-sm text-muted-foreground">
+                      за {p.durationMinutes} мин.
+                    </span>
+                  </p>
+                  <Button variant="hero" size="xl" asChild>
+                    <a
+                      href={telegramBookingUrl(p.telegramUsername)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Send size={16} /> Записаться в Telegram
+                    </a>
+                  </Button>
+                  <p className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
+                    <span>@{p.telegramUsername}</span>
+                    <a
+                      href={`tel:${p.phone.number}`}
+                      className="inline-flex min-h-11 items-center underline underline-offset-4"
+                    >
+                      {p.phone.display}
+                    </a>
+                  </p>
+                </div>
               </article>
             ))}
           </div>

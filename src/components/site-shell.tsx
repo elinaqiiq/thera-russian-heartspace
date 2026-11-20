@@ -1,15 +1,27 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X, Sparkles } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { BookOpen, Menu, X, Sparkles } from "lucide-react";
+import { useRef, useState, type ReactNode } from "react";
 import { navItems } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="site-header">
-        <div className="container-site flex h-18 items-center justify-between gap-6">
+      <a className="skip-link" href="#main-content">
+        Перейти к содержанию
+      </a>
+      <header
+        className="site-header"
+        onKeyDown={(event) => {
+          if (event.key === "Escape" && open) {
+            setOpen(false);
+            menuButton.current?.focus();
+          }
+        }}
+      >
+        <div className="container-site flex h-18 items-center justify-between gap-3 lg:gap-5">
           <Link to="/" className="brand" onClick={() => setOpen(false)}>
             <span className="brand-icon">
               <Sparkles size={20} />
@@ -28,45 +40,55 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
-          <span className="hidden items-center gap-2 text-xs text-muted-foreground xl:flex">
-            <span className="status-dot" /> Пространство для тебя
-          </span>
+          <Button asChild variant="soft" className="ml-auto hidden h-11 lg:inline-flex">
+            <Link to="/journal">
+              <BookOpen aria-hidden="true" /> Дневник
+            </Link>
+          </Button>
           <Button
-            className="lg:hidden"
+            ref={menuButton}
+            className="size-11 lg:hidden"
             variant="ghost"
             size="icon"
             aria-label={open ? "Закрыть меню" : "Открыть меню"}
             aria-expanded={open}
-            onClick={() => setOpen(!open)}
+            aria-controls="mobile-navigation"
+            onClick={() => setOpen((value) => !value)}
           >
             {open ? <X /> : <Menu />}
           </Button>
         </div>
-        {open && (
-          <nav className="container-site grid gap-1 pb-5 lg:hidden" aria-label="Мобильное меню">
-            {navItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className="mobile-link"
-                activeProps={{ className: "nav-link-active" }}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        )}
+        <nav
+          id="mobile-navigation"
+          className={open ? "container-site mobile-navigation grid gap-1 pb-4 lg:hidden" : "hidden"}
+          aria-label="Мобильное меню"
+        >
+          {[...navItems, { to: "/journal", label: "Дневник" } as const].map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => setOpen(false)}
+              className="mobile-link"
+              activeProps={{ className: "nav-link-active" }}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
       </header>
-      <main>{children}</main>
+      <main id="main-content" tabIndex={-1}>
+        {children}
+      </main>
       <footer className="border-t border-border/70 py-9">
         <div className="container-site flex flex-col gap-5 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
           <Link to="/" className="brand text-base">
             Therapy<span className="text-accent">AI</span>
           </Link>
-          <p>Бережная поддержка. В твоём темпе.</p>
+          <Link to="/how-it-works" className="hover:text-foreground">
+            Как это работает
+          </Link>
           <Link to="/support" className="hover:text-foreground">
-            Поддержка и безопасность ↗
+            Поддержка и безопасность
           </Link>
         </div>
       </footer>

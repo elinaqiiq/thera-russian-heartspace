@@ -1,126 +1,132 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, MessageCircle, Heart, Sparkles, ArrowUpRight, Check } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  ClipboardList,
+  Heart,
+  MessageCircle,
+  Wind,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { bookingSubmissionsEnabled, pageHead } from "@/lib/site";
-import mascot from "@/assets/thera-cat.asset.json";
+import { bookingSubmissionsEnabled, formatKzt, pageHead, psychologists } from "@/lib/site";
+
 export const Route = createFileRoute("/")({
   head: () =>
     pageHead(
       "Что тебя сейчас беспокоит?",
-      "Можно начать с того, о чём проще говорить. Бесплатный чат с Thera и отдельные консультации психологов.",
+      "Бесплатный чат с Thera, практики самопомощи и консультации психолога.",
     ),
   component: Index,
 });
+
+const tools = [
+  {
+    to: "/practices",
+    icon: Wind,
+    title: "Дыхательные практики",
+    description: "Сделай паузу и попробуй дыхание по таймеру.",
+  },
+  {
+    to: "/journal",
+    icon: BookOpen,
+    title: "Дневник эмоций",
+    description: "Запиши, что чувствуешь, и возвращайся к своим заметкам.",
+  },
+  {
+    to: "/tests",
+    icon: ClipboardList,
+    title: "Опросники",
+    description: "Оцени тревогу, настроение и самочувствие.",
+  },
+] as const;
+
 function Index() {
+  const specialist = psychologists[0];
+
   return (
     <>
-      <section className="hero">
-        <img
-          className="hero-image"
-          src={mascot.url}
-          alt="Чёрный кот Thera с большими добрыми глазами и сине-фиолетовым сиянием"
-        />
-        <div className="container-site hero-inner">
-          <span className="hero-label">
-            <Heart size={13} /> Бережное пространство
-          </span>
-          <h1 className="hero-title mt-7">
-            Что тебя сейчас
-            <br className="hidden md:block" /> беспокоит?
-          </h1>
-          <p className="mt-6 max-w-lg text-lg leading-8 text-muted-foreground">
-            Можно начать с того, о чём проще говорить
+      <section className="container-site home-hero">
+        <div className="home-hero-content">
+          <p className="eyebrow">Бесплатный чат для эмоциональной поддержки</p>
+          <h1 className="hero-title mt-5">Что тебя сейчас беспокоит?</h1>
+          <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">
+            Можно начать с того, о чём проще говорить. Thera поможет выговориться и сформулировать,
+            что ты чувствуешь.
           </p>
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <Button asChild variant="hero" size="xl">
               <Link to="/thera">
-                <MessageCircle /> Поговорить с Thera <ArrowUpRight />
+                <MessageCircle aria-hidden="true" /> Поговорить с Thera{" "}
+                <ArrowUpRight aria-hidden="true" />
               </Link>
             </Button>
             <Button asChild variant="soft" size="xl">
               <Link to="/psychologists">
-                Записаться к психологу <ArrowUpRight />
+                К психологу <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
           </div>
-          <div className="mt-5 flex items-center gap-2 text-xs text-muted-foreground">
-            <Check size={13} className="text-accent" /> Чат бесплатно{" "}
-            <span className="mx-2">·</span> Без обязательств
-          </div>
-          <div className="mt-12 flex max-w-xl flex-wrap gap-2">
-            {["Тревога", "Отношения", "Усталость", "Одиночество", "Не знаю, с чего начать"].map(
-              (topic) => (
-                <Link className="topic-chip" to="/thera" key={topic}>
-                  {topic}
-                </Link>
-              ),
-            )}
-          </div>
+        </div>
+        <div className="home-hero-visual">
+          <img src="/thera-cat.webp" width={1672} height={941} alt="" fetchPriority="high" />
         </div>
       </section>
-      <section className="container-site pb-16 pt-7">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+
+      <section
+        className="container-site pb-14 pt-12 md:pb-20 md:pt-16"
+        aria-labelledby="tools-heading"
+      >
+        <h2 id="tools-heading" className="section-title mb-6">
+          Поддержка в своём темпе
+        </h2>
+        <div className="grid gap-3 md:grid-cols-3 md:gap-4">
+          {tools.map(({ to, icon: Icon, title, description }) => (
+            <Link key={to} to={to} className="home-tool">
+              <span className="feature-icon">
+                <Icon size={22} aria-hidden="true" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold">{title}</span>
+                <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+                  {description}
+                </span>
+              </span>
+              <ArrowRight size={18} className="shrink-0 text-accent" aria-hidden="true" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="container-site pb-14 md:pb-20" aria-labelledby="consultation-heading">
+        <div className="soft-card consultation-callout">
           <div>
-            <p className="eyebrow">Поддержка бывает разной</p>
-            <h2 className="section-title mt-3">Выбери то, что нужно сейчас</h2>
+            <span className="feature-icon mb-5">
+              <Heart size={22} aria-hidden="true" />
+            </span>
+            <h2 id="consultation-heading" className="section-title">
+              Консультация с психологом
+            </h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
+              Можно обратиться к психологу напрямую. Если ты уже поговорил с Thera, возьми на
+              встречу сводку того, что хочется обсудить.
+            </p>
           </div>
-          <Link
-            to="/how-it-works"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent"
-          >
-            Как это работает <ArrowRight size={16} />
-          </Link>
-        </div>
-        <div className="grid gap-5 md:grid-cols-2">
-          <article className="soft-card p-7 md:p-8">
-            <div className="flex items-center justify-between">
-              <span className="feature-icon">
-                <MessageCircle size={22} />
-              </span>
-              <span className="text-xs text-accent">Бесплатно</span>
-            </div>
-            <h3 className="mt-6 text-xl font-semibold">Разговор с Thera</h3>
-            <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">
-              Когда хочется выговориться, разобраться в чувствах или просто не оставаться с ними
-              наедине.
-            </p>
-            <Button asChild variant="link" className="mt-5 h-auto px-0 text-accent">
-              <Link to="/thera">
-                Начать разговор <ArrowRight />
-              </Link>
-            </Button>
-          </article>
-          <article className="soft-card p-7 md:p-8">
-            <div className="flex items-center justify-between">
-              <span className="feature-icon">
-                <Heart size={22} />
-              </span>
-              <span className="text-xs text-muted-foreground">Оплачивается отдельно</span>
-            </div>
-            <h3 className="mt-6 text-xl font-semibold">Помощь психолога</h3>
-            <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">
-              {bookingSubmissionsEnabled
-                ? "Профессиональная поддержка и личная консультация. Запись через Telegram."
-                : "Профессиональная поддержка и личная консультация. Запись откроется после подключения специалистов."}
-            </p>
-            <Button asChild variant="link" className="mt-5 h-auto px-0 text-accent">
+          <div className="flex flex-col items-start gap-3 md:items-end">
+            {bookingSubmissionsEnabled && specialist && (
+              <p className="text-sm text-muted-foreground">
+                <strong className="text-base text-foreground">
+                  {formatKzt(specialist.priceKzt)}
+                </strong>{" "}
+                за {specialist.durationMinutes} мин.
+              </p>
+            )}
+            <Button asChild variant="soft" size="lg">
               <Link to="/psychologists">
-                О консультациях <ArrowRight />
+                О консультации <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
-          </article>
-        </div>
-      </section>
-      <section className="border-t border-border/50 py-12">
-        <div className="container-site flex flex-col gap-5 md:flex-row md:items-center md:gap-12">
-          <Sparkles className="shrink-0 text-accent" size={27} />
-          <p className="max-w-3xl text-sm leading-7 text-muted-foreground">
-            Не обязательно сразу находить правильные слова. Thera — ИИ-собеседник для эмоциональной
-            поддержки, а не замена психолога или экстренной помощи.
-          </p>
-          <Link to="/support" className="shrink-0 text-sm text-accent">
-            О безопасности ↗
-          </Link>
+          </div>
         </div>
       </section>
     </>
