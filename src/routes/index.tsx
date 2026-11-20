@@ -6,6 +6,7 @@ import {
   ClipboardList,
   Heart,
   MoonStar,
+  NotebookPen,
   MessageCircle,
   Wind,
 } from "lucide-react";
@@ -23,25 +24,47 @@ export const Route = createFileRoute("/")({
 
 const tools = [
   {
-    to: "/practices",
-    icon: Wind,
+    to: "/thera",
+    icon: MessageCircle,
     tone: "lavender",
-    title: "Дыхательные практики",
-    description: "Сделай паузу и попробуй дыхание по таймеру.",
+    title: "Чат с Thera",
+    description: "Поговорить с ИИ",
   },
   {
-    to: "/journal",
-    icon: BookOpen,
+    to: "/psychologists",
+    icon: Heart,
     tone: "peach",
-    title: "Дневник эмоций",
-    description: "Запиши, что чувствуешь, и возвращайся к своим заметкам.",
+    title: "Психолог",
+    description: "Запись на консультацию",
   },
   {
     to: "/tests",
     icon: ClipboardList,
     tone: "mint",
-    title: "Опросники",
-    description: "Оцени тревогу, настроение и самочувствие.",
+    title: "Тесты",
+    description: "Тревога и настроение",
+  },
+  {
+    to: "/practices",
+    icon: Wind,
+    tone: "mint",
+    title: "Практики",
+    description: "Дыхание по таймеру",
+  },
+  {
+    to: "/journal",
+    icon: BookOpen,
+    tone: "lavender",
+    title: "Дневник",
+    description: "Записи об эмоциях",
+  },
+  {
+    to: "/psychologists",
+    hash: "session-prep",
+    icon: NotebookPen,
+    tone: "peach",
+    title: "Сводка",
+    description: "Подготовка к встрече",
   },
 ] as const;
 
@@ -50,6 +73,24 @@ function Index() {
 
   return (
     <>
+      <nav className="container-site pt-5 sm:pt-7" aria-label="Возможности Thera">
+        <p className="mb-3 text-sm font-bold">Возможности Thera</p>
+        <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
+          {tools.map(({ to, icon: Icon, title, description, tone, ...target }) => (
+            <li key={title} className="min-w-0">
+              <Link to={to} {...target} className="home-tool" data-tone={tone}>
+                <Icon size={19} className="shrink-0 text-accent" aria-hidden="true" />
+                <span className="min-w-0">
+                  <span className="block text-sm font-bold">{title}</span>
+                  <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                    {description}
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
       <section className="container-site home-hero" aria-labelledby="hero-heading">
         <div className="home-hero-content">
           <p className="eyebrow">Бесплатный чат для эмоциональной поддержки</p>
@@ -91,36 +132,7 @@ function Index() {
         </div>
       </section>
 
-      <section
-        className="container-site pb-14 pt-12 md:pb-20 md:pt-16"
-        aria-labelledby="tools-heading"
-      >
-        <h2 id="tools-heading" className="section-title mb-7">
-          Поддержка в своём темпе
-        </h2>
-        <div className="grid gap-3 md:grid-cols-3 md:gap-4">
-          {tools.map(({ to, icon: Icon, title, description, tone }) => (
-            <Link key={to} to={to} className="home-tool" data-tone={tone}>
-              <span className="feature-icon">
-                <Icon size={22} aria-hidden="true" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-base font-bold">{title}</span>
-                <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
-                  {description}
-                </span>
-              </span>
-              <ArrowRight
-                size={18}
-                className="home-tool-arrow shrink-0 text-accent"
-                aria-hidden="true"
-              />
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="container-site pb-14 md:pb-20" aria-labelledby="consultation-heading">
+      <section className="container-site py-12 md:py-16" aria-labelledby="consultation-heading">
         <div className="soft-card consultation-callout home-consultation">
           <div>
             <span className="feature-icon mb-5">
