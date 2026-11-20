@@ -1,4 +1,3 @@
-import { initTheme } from "@/components/theme-toggle";
 import { AuthState } from "@/components/auth-state";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -119,9 +118,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru">
       <head>
-        <script dangerouslySetInnerHTML={{ __html: initTheme }} />
         <HeadContent />
       </head>
       <body>

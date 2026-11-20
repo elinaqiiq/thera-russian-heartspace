@@ -5,8 +5,6 @@ import {
   BookOpen,
   ClipboardList,
   Heart,
-  MoonStar,
-  NotebookPen,
   MessageCircle,
   Wind,
 } from "lucide-react";
@@ -24,47 +22,22 @@ export const Route = createFileRoute("/")({
 
 const tools = [
   {
-    to: "/thera",
-    icon: MessageCircle,
-    tone: "lavender",
-    title: "Чат с Thera",
-    description: "Поговорить с ИИ",
-  },
-  {
-    to: "/psychologists",
-    icon: Heart,
-    tone: "peach",
-    title: "Психолог",
-    description: "Запись на консультацию",
-  },
-  {
-    to: "/tests",
-    icon: ClipboardList,
-    tone: "mint",
-    title: "Тесты",
-    description: "Тревога и настроение",
-  },
-  {
     to: "/practices",
     icon: Wind,
-    tone: "mint",
-    title: "Практики",
-    description: "Дыхание по таймеру",
+    title: "Дыхательные практики",
+    description: "Сделай паузу и попробуй дыхание по таймеру.",
   },
   {
     to: "/journal",
     icon: BookOpen,
-    tone: "lavender",
-    title: "Дневник",
-    description: "Записи об эмоциях",
+    title: "Дневник эмоций",
+    description: "Запиши, что чувствуешь, и возвращайся к своим заметкам.",
   },
   {
-    to: "/psychologists",
-    hash: "session-prep",
-    icon: NotebookPen,
-    tone: "peach",
-    title: "Сводка",
-    description: "Подготовка к встрече",
+    to: "/tests",
+    icon: ClipboardList,
+    title: "Опросники",
+    description: "Оцени тревогу, настроение и самочувствие.",
   },
 ] as const;
 
@@ -73,33 +46,13 @@ function Index() {
 
   return (
     <>
-      <nav className="container-site home-shortcuts pt-5 sm:pt-7" aria-label="Возможности Thera">
-        <p className="mb-3 text-sm font-bold">Возможности Thera</p>
-        <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
-          {tools.map(({ to, icon: Icon, title, description, tone, ...target }) => (
-            <li key={title} className="min-w-0">
-              <Link to={to} {...target} className="home-tool" data-tone={tone}>
-                <Icon size={19} className="shrink-0 text-accent" aria-hidden="true" />
-                <span className="min-w-0">
-                  <span className="block text-sm font-bold">{title}</span>
-                  <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
-                    {description}
-                  </span>
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <section className="container-site home-hero" aria-labelledby="hero-heading">
+      <section className="container-site home-hero">
         <div className="home-hero-content">
-          <p className="eyebrow hero-eyebrow">Бесплатный чат для эмоциональной поддержки</p>
-          <h1 id="hero-heading" className="hero-title mt-5">
-            Что тебя сейчас <span>беспокоит?</span>
-          </h1>
+          <p className="eyebrow">Бесплатный чат для эмоциональной поддержки</p>
+          <h1 className="hero-title mt-5">Что тебя сейчас беспокоит?</h1>
           <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">
-            Можно начать с того, о чём проще говорить. Thera выслушает и поможет подобрать слова для
-            того, что ты чувствуешь.
+            Можно начать с того, о чём проще говорить. Thera поможет выговориться и сформулировать,
+            что ты чувствуешь.
           </p>
           <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <Button asChild variant="hero" size="xl">
@@ -116,41 +69,37 @@ function Index() {
           </div>
         </div>
         <div className="home-hero-visual">
-          <div className="home-cat-frame">
-            <img
-              src="/thera-cat.webp"
-              width={1672}
-              height={941}
-              alt="Кот Thera"
-              fetchPriority="high"
-            />
-          </div>
-          <span className="home-cat-moon" aria-hidden="true">
-            <MoonStar size={24} />
-          </span>
+          <img src="/thera-cat.webp" width={1672} height={941} alt="" fetchPriority="high" />
         </div>
       </section>
 
-      <section className="container-site home-next" aria-label="Практика и консультация">
-        <article className="home-practice" aria-labelledby="practice-heading">
-          <div className="home-practice-content">
-            <span className="feature-icon">
-              <Wind size={22} aria-hidden="true" />
-            </span>
-            <h2 id="practice-heading" className="section-title mt-4">
-              Минута для себя
-            </h2>
-            <p className="mt-3 max-w-xs text-sm leading-6 text-muted-foreground">
-              Дыхание по таймеру, когда хочется остановиться и сделать паузу.
-            </p>
-            <Button asChild variant="soft" className="mt-5 min-h-11">
-              <Link to="/practices">
-                Открыть практику <ArrowRight aria-hidden="true" />
-              </Link>
-            </Button>
-          </div>
-        </article>
-        <article className="soft-card home-consultation" aria-labelledby="consultation-heading">
+      <section
+        className="container-site pb-14 pt-12 md:pb-20 md:pt-16"
+        aria-labelledby="tools-heading"
+      >
+        <h2 id="tools-heading" className="section-title mb-6">
+          Поддержка в своём темпе
+        </h2>
+        <div className="grid gap-3 md:grid-cols-3 md:gap-4">
+          {tools.map(({ to, icon: Icon, title, description }) => (
+            <Link key={to} to={to} className="home-tool">
+              <span className="feature-icon">
+                <Icon size={22} aria-hidden="true" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold">{title}</span>
+                <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+                  {description}
+                </span>
+              </span>
+              <ArrowRight size={18} className="shrink-0 text-accent" aria-hidden="true" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="container-site pb-14 md:pb-20" aria-labelledby="consultation-heading">
+        <div className="soft-card consultation-callout">
           <div>
             <span className="feature-icon mb-5">
               <Heart size={22} aria-hidden="true" />
@@ -163,7 +112,7 @@ function Index() {
               встречу сводку того, что хочется обсудить.
             </p>
           </div>
-          <div className="flex flex-col items-start gap-3">
+          <div className="flex flex-col items-start gap-3 md:items-end">
             {bookingSubmissionsEnabled && specialist && (
               <p className="text-sm text-muted-foreground">
                 <strong className="text-base text-foreground">
@@ -178,7 +127,7 @@ function Index() {
               </Link>
             </Button>
           </div>
-        </article>
+        </div>
       </section>
     </>
   );
