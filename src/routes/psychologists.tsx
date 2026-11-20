@@ -1,9 +1,9 @@
+import { PsychologistTelegramLink } from "@/components/psychologist-telegram-link";
 import { ConsultationRequest } from "@/components/consultation-request";
 import { createFileRoute } from "@tanstack/react-router";
-import { Heart, Clock, Send, Video } from "lucide-react";
+import { Heart, Clock, Video } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
-import { Button } from "@/components/ui/button";
-import { pageHead, psychologists, formatKzt, telegramBookingUrl } from "@/lib/site";
+import { pageHead, psychologists, formatKzt } from "@/lib/site";
 import { SessionPrep } from "@/components/session-prep";
 export const Route = createFileRoute("/psychologists")({
   head: () =>
@@ -74,15 +74,7 @@ function Psychologists() {
                       за {p.durationMinutes} мин.
                     </span>
                   </p>
-                  <Button variant="hero" size="xl" asChild>
-                    <a
-                      href={telegramBookingUrl(p.telegramUsername)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Send size={16} /> Записаться в Telegram
-                    </a>
-                  </Button>
+                  <PsychologistTelegramLink specialist={p} />
                   <p className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
                     <span>@{p.telegramUsername}</span>
                     <a

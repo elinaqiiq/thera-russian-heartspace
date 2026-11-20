@@ -15,6 +15,8 @@ type ConsultationRequest = {
   created_at: string;
 };
 
+type ConsultationVisit = Omit<ConsultationRequest, "telegram_username">;
+
 type RegistryDatabase = {
   public: {
     Tables: {
@@ -22,6 +24,12 @@ type RegistryDatabase = {
         Row: RegistryAdmin;
         Insert: RegistryAdmin;
         Update: Partial<RegistryAdmin>;
+        Relationships: [];
+      };
+      thera_psychologist_visits: {
+        Row: ConsultationVisit;
+        Insert: Omit<ConsultationVisit, "created_at">;
+        Update: Partial<ConsultationVisit>;
         Relationships: [];
       };
       thera_consultation_requests: {
@@ -100,4 +108,26 @@ export const submitConsultationRequest = createServerFn({ method: "POST" })
     }
     if (error) throw new Error("Не удалось сохранить заявку.");
     return { id: data.id };
+  });
+
+export const recordPsychologistVisit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    z.object({
+      specialistId: z
+        .string()
+        .max(80)
+        .refine((id) => psychologists.some((p) => p.id === id)),
+    }),
+  )
+  .handler(async ({ context, data }) => {
+    privateResponse();
+    const { error } = await registryDatabase(context.supabase)
+      .from("thera_psychologist_visits")
+      .insert({
+        id: crypto.randomUUID(),
+        user_id: context.userId,
+        specialist_id: data.specialistId,
+      });
+    return { recorded: !error };
   });

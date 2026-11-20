@@ -8,7 +8,7 @@ const almatyDate = new Intl.DateTimeFormat("ru-RU", {
 });
 const timestamp = (value: string | null) => (value ? almatyDate.format(new Date(value)) : null);
 
-export async function buildRegistryWorkbook({ users, requests }: Registry) {
+export async function buildRegistryWorkbook({ users, requests, visits }: Registry) {
   const { default: writeExcelFile } = await import("write-excel-file/universal");
   return writeExcelFile([
     {
@@ -50,6 +50,21 @@ export async function buildRegistryWorkbook({ users, requests }: Registry) {
           user_id,
           email,
           telegram_username ? "@" + telegram_username : null,
+          psychologists.find((p) => p.id === specialist_id)?.telegramUsername ?? specialist_id,
+          timestamp(created_at),
+        ]),
+      ],
+    },
+    {
+      sheet: "Переходы в Telegram",
+      stickyRowsCount: 1,
+      columns: [{ width: 40 }, { width: 40 }, { width: 36 }, { width: 24 }, { width: 26 }],
+      data: [
+        ["ID перехода", "ID аккаунта", "Email", "Психолог", "Переход (Алматы)"],
+        ...visits.map(({ id, user_id, email, specialist_id, created_at }) => [
+          id,
+          user_id,
+          email,
           psychologists.find((p) => p.id === specialist_id)?.telegramUsername ?? specialist_id,
           timestamp(created_at),
         ]),

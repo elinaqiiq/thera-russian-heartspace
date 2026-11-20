@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { LovableMark } from "@lovable.dev/cloud-auth-js/react";
 import { lovable } from "@/integrations/lovable";
@@ -12,9 +12,14 @@ export function AuthPanel() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [showResend, setShowResend] = useState(false);
+  const emailField = useRef<HTMLInputElement>(null);
   function authError(error: unknown) {
     const code = typeof error === "object" && error && "code" in error ? error.code : null;
-    if (code === "email_not_confirmed") return "Сначала подтверди email по ссылке в письме.";
+    if (code === "email_not_confirmed") {
+      setShowResend(true);
+      return "Сначала подтверди email по ссылке в письме. Проверь папку «Спам» или запроси письмо снова.";
+    }
     if (code === "over_email_send_rate_limit" || code === "over_request_rate_limit")
       return "Слишком много запросов. Подожди немного и попробуй снова.";
     if (code === "signup_disabled" || code === "email_provider_disabled")
@@ -42,11 +47,12 @@ export function AuthPanel() {
           options: { emailRedirectTo: `${window.location.origin}/journal` },
         });
         if (error) throw error;
-        if (!data.session)
+        if (!data.session) {
+          setShowResend(true);
           setMessage(
-            "Если адрес можно зарегистрировать, на него придёт письмо. Открой ссылку в письме и затем войди.",
+            "Если адрес можно зарегистрировать, придёт письмо. Проверь входящие и папку «Спам».",
           );
-        else await router.invalidate();
+        } else await router.invalidate();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
@@ -58,6 +64,27 @@ export function AuthPanel() {
       setBusy(false);
     }
   }
+  async function resend() {
+    if (busy || !emailField.current?.reportValidity()) return;
+    setBusy(true);
+    setMessage("");
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: email.trim(),
+        options: { emailRedirectTo: `${window.location.origin}/journal` },
+      });
+      if (error) throw error;
+      setMessage(
+        "Если адрес ожидает подтверждения, письмо придёт снова. Проверь также папку «Спам».",
+      );
+    } catch (error) {
+      setMessage(authError(error));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function social(provider: "google" | "lovable") {
     setBusy(true);
     setMessage("");
@@ -94,6 +121,7 @@ export function AuthPanel() {
           <input
             className="field mt-2"
             type="email"
+            ref={emailField}
             autoComplete="email"
             required
             maxLength={255}
@@ -139,6 +167,7 @@ export function AuthPanel() {
         <Button
           variant="link"
           onClick={() => {
+            setShowResend(false);
             setMode("reset");
             setMessage("");
           }}
@@ -146,6 +175,17 @@ export function AuthPanel() {
           Забыли пароль?
         </Button>
       </div>
+      {showResend && mode !== "reset" && (
+        <Button
+          type="button"
+          variant="outline"
+          className="mt-3"
+          disabled={busy}
+          onClick={() => void resend()}
+        >
+          Повторить письмо для подтверждения
+        </Button>
+      )}
       <div className="mt-4 grid gap-3">
         <Button
           className="google-signin"

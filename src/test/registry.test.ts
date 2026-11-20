@@ -6,7 +6,7 @@ import { buildRegistryWorkbook } from "@/lib/registry-workbook";
 afterEach(() => vi.unstubAllEnvs());
 
 it("creates an XLSX workbook even before any users or requests exist", async () => {
-  const workbook = await buildRegistryWorkbook({ users: [], requests: [] });
+  const workbook = await buildRegistryWorkbook({ users: [], requests: [], visits: [] });
   const bytes = new Uint8Array(await workbook.arrayBuffer());
   expect(Array.from(bytes.subarray(0, 4))).toEqual([0x50, 0x4b, 0x03, 0x04]);
 });

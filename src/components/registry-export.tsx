@@ -46,7 +46,7 @@ export function RegistryExport() {
     <section className="soft-card mb-6 p-5">
       <h2 className="text-lg font-bold">Отчёт для владельца</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Регистрации и отправленные заявки к психологу.
+        Регистрации, заявки и переходы к психологу после входа в аккаунт.
       </p>
       <Button
         type="button"

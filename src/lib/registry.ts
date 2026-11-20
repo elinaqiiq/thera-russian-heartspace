@@ -19,6 +19,15 @@ export const registrySchema = z.object({
       created_at: z.string(),
     }),
   ),
+  visits: z.array(
+    z.object({
+      id: z.string(),
+      user_id: z.string(),
+      email: z.string().nullable(),
+      specialist_id: z.string(),
+      created_at: z.string(),
+    }),
+  ),
 });
 
 export type Registry = z.infer<typeof registrySchema>;
