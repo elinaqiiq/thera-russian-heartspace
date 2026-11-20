@@ -19,6 +19,7 @@ describe("TherapyAI rules", () => {
     expect(bookingSubmissionsEnabled).toBe(true);
     expect(psychologists).toHaveLength(1);
     const [specialist] = psychologists;
+    if (!specialist) throw new Error("Missing specialist");
     expect(telegramChatUrl(specialist.telegramUsername)).toBe("https://t.me/elina_l_r");
     expect(specialist.phone.number).toBe("+77770125648");
     expect(specialist.durationMinutes).toBe(60);

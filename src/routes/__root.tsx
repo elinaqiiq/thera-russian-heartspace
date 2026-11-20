@@ -1,3 +1,4 @@
+import { AuthState } from "@/components/auth-state";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -135,9 +136,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <SiteShell>
-        <Outlet />
-      </SiteShell>
+      <AuthState>
+        <SiteShell>
+          <Outlet />
+        </SiteShell>
+      </AuthState>
     </QueryClientProvider>
   );
 }

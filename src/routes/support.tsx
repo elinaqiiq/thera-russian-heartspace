@@ -54,8 +54,8 @@ function Support() {
             <h2 className="text-lg font-semibold">Как используются данные</h2>
             <ul className="mt-4 list-disc space-y-3 pl-5 text-sm leading-7 text-muted-foreground">
               <li>
-                Переписку в чате обрабатывает Botpress. В личном профиле TherapyAI этот чат не
-                отображается.
+                Переписку обрабатывает Botpress. История гостевого чата не привязана к аккаунту.
+                Когда личный чат подключён, его историю можно открыть или удалить на странице Thera.
               </li>
               <li>
                 По кнопке «Составить сводку» выбранный текст уходит на обработку ИИ через Lovable.
