@@ -28,7 +28,7 @@ describe("TherapyAI rules", () => {
   it("puts only the generic booking draft in the Telegram link", () => {
     const url = new URL(telegramBookingUrl("elina_l_r"));
     expect(url.origin + url.pathname).toBe("https://t.me/elina_l_r");
-    expect(url.searchParams.get("text")).toBe(
+    expect(decodeURIComponent(url.search.slice("?text=".length))).toBe(
       "Здравствуйте! Хочу записаться на консультацию. Какие есть свободные окна?",
     );
   });

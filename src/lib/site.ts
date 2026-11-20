@@ -28,12 +28,8 @@ export function telegramChatUrl(username: string) {
 }
 
 export function telegramBookingUrl(username: string) {
-  const url = new URL(telegramChatUrl(username));
-  url.searchParams.set(
-    "text",
-    "Здравствуйте! Хочу записаться на консультацию. Какие есть свободные окна?",
-  );
-  return url.toString();
+  const draft = "Здравствуйте! Хочу записаться на консультацию. Какие есть свободные окна?";
+  return `${telegramChatUrl(username)}?text=${encodeURIComponent(draft)}`;
 }
 
 export const bookingSubmissionsEnabled = psychologists.length > 0;
