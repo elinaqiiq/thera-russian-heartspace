@@ -4,6 +4,7 @@ import { setResponseHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { psychologists } from "./site";
+import type { ConsultationStatus } from "./consultations";
 
 type ConsultationRequest = {
   id: string;
@@ -11,9 +12,14 @@ type ConsultationRequest = {
   specialist_id: string;
   telegram_username: string | null;
   created_at: string;
+  requested_start: string | null;
+  status: ConsultationStatus;
 };
 
-type ConsultationVisit = Omit<ConsultationRequest, "telegram_username">;
+type ConsultationVisit = Pick<
+  ConsultationRequest,
+  "id" | "user_id" | "specialist_id" | "created_at"
+>;
 
 type RegistryDatabase = {
   public: {
@@ -26,13 +32,16 @@ type RegistryDatabase = {
       };
       thera_consultation_requests: {
         Row: ConsultationRequest;
-        Insert: Omit<ConsultationRequest, "created_at">;
+        Insert: Omit<ConsultationRequest, "created_at" | "status">;
         Update: Partial<ConsultationRequest>;
         Relationships: [];
       };
     };
     Views: Record<never, never>;
-    Functions: { thera_registry_export: { Args: Record<never, never>; Returns: unknown } };
+    Functions: {
+      thera_registry_export: { Args: Record<never, never>; Returns: unknown };
+      thera_cancel_consultation: { Args: { request_id: string }; Returns: boolean };
+    };
   };
 };
 
@@ -57,17 +66,25 @@ export const submitConsultationRequest = createServerFn({ method: "POST" })
         z.string().regex(/^[a-zA-Z][a-zA-Z0-9_]{3,30}[a-zA-Z0-9]$/),
         z.literal(""),
       ]),
+      requestedStart: z
+        .string()
+        .datetime()
+        .refine((date) => Date.parse(date) % 3_600_000 === 0),
       consent: z.literal(true),
     }),
   )
   .handler(async ({ data, context }) => {
     privateResponse();
     const target = registryDatabase(context.supabase).from("thera_consultation_requests");
+    if (Date.parse(data.requestedStart) <= Date.now()) {
+      throw new Error("Выбери дату и время в будущем.");
+    }
     const { error } = await target.insert({
       id: data.id,
       user_id: context.userId,
       specialist_id: data.specialistId,
       telegram_username: data.telegramUsername || null,
+      requested_start: data.requestedStart,
     });
     if (error?.code === "23505") {
       const existing = await target
@@ -79,6 +96,31 @@ export const submitConsultationRequest = createServerFn({ method: "POST" })
     }
     if (error) throw new Error("Не удалось сохранить заявку.");
     return { id: data.id };
+  });
+
+export const listConsultationRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    privateResponse();
+    const { data, error } = await registryDatabase(context.supabase)
+      .from("thera_consultation_requests")
+      .select("id, created_at, requested_start, status")
+      .eq("user_id", context.userId)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error("Не удалось загрузить заявки.");
+    return data;
+  });
+
+export const cancelConsultationRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ id: z.string().uuid() }))
+  .handler(async ({ context, data }) => {
+    privateResponse();
+    const result = await registryDatabase(context.supabase).rpc("thera_cancel_consultation", {
+      request_id: data.id,
+    });
+    if (result.error) throw new Error("Не удалось отменить заявку.");
+    return { cancelled: result.data === true };
   });
 
 export const recordPsychologistVisit = createServerFn({ method: "POST" })
