@@ -5,7 +5,6 @@ import { pageHead } from "@/lib/site";
 import { useAuthState } from "@/components/auth-state";
 import { AuthPanel } from "@/components/auth-panel";
 import { JournalEditor } from "@/components/journal-editor";
-import { RegistryExport } from "@/components/registry-export";
 
 export const Route = createFileRoute("/journal")({
   head: () =>
@@ -28,12 +27,9 @@ function Journal() {
           {!ready ? (
             <p role="status">Проверяем вход…</p>
           ) : user ? (
-            <div key={user.id}>
-              <RegistryExport />
-              <Suspense fallback={<p>Загружаем записи…</p>}>
-                <JournalEditor />
-              </Suspense>
-            </div>
+            <Suspense key={user.id} fallback={<p>Загружаем записи…</p>}>
+              <JournalEditor />
+            </Suspense>
           ) : (
             <AuthPanel />
           )}

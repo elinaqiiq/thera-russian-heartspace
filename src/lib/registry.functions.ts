@@ -3,10 +3,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { registrySchema } from "./registry";
 import { psychologists } from "./site";
 
-type RegistryAdmin = { user_id: string };
 type ConsultationRequest = {
   id: string;
   user_id: string;
@@ -20,12 +18,6 @@ type ConsultationVisit = Omit<ConsultationRequest, "telegram_username">;
 type RegistryDatabase = {
   public: {
     Tables: {
-      thera_registry_admins: {
-        Row: RegistryAdmin;
-        Insert: RegistryAdmin;
-        Update: Partial<RegistryAdmin>;
-        Relationships: [];
-      };
       thera_psychologist_visits: {
         Row: ConsultationVisit;
         Insert: Omit<ConsultationVisit, "created_at">;
@@ -51,27 +43,6 @@ export function registryDatabase(client: object) {
 function privateResponse() {
   setResponseHeader("Cache-Control", "private, no-store");
 }
-
-export const checkRegistryAccess = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    privateResponse();
-    const result = await registryDatabase(context.supabase)
-      .from("thera_registry_admins")
-      .select("user_id")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    return { allowed: Boolean(result.data) };
-  });
-
-export const exportRegistry = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    privateResponse();
-    const result = await registryDatabase(context.supabase).rpc("thera_registry_export", {});
-    if (result.error) throw new Error("Выгрузка доступна только владельцу.");
-    return registrySchema.parse(result.data);
-  });
 
 export const submitConsultationRequest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
