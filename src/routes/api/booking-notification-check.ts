@@ -22,13 +22,8 @@ async function checkNotification(request: Request): Promise<Response> {
   const chatId = rawChatId?.trim();
   if (!token || !chatId)
     return Response.json({ tokenSet: Boolean(token), chatSet: Boolean(chatId) }, { headers });
-  if (!/^\d+:[A-Za-z0-9_-]+$/.test(token) || !/^[1-9]\d*$/.test(chatId)) {
-    return Response.json(
-      { tokenFormat: /^\d+:[A-Za-z0-9_-]+$/.test(token), chatIdFormat: /^[1-9]\d*$/.test(chatId) },
-      { headers },
-    );
-  }
-  if (token.split(":")[0] === chatId) return Response.json({ chatIdIsBotId: true }, { headers });
+  if (!/^\d+:[A-Za-z0-9_-]+$/.test(token))
+    return Response.json({ tokenFormat: false }, { headers });
 
   try {
     const check = async (endpoint: string, body?: object) =>
@@ -41,6 +36,26 @@ async function checkNotification(request: Request): Promise<Response> {
       });
     const bot = await check("getMe");
     if (!bot.ok) return Response.json({ botStatus: bot.status }, { headers });
+    if (!/^[1-9]\d*$/.test(chatId) || token.split(":")[0] === chatId) {
+      const updates = await check("getUpdates", { limit: 100 });
+      if (!updates.ok) return Response.json({ updatesStatus: updates.status }, { headers });
+      const data = (await updates.json()) as {
+        result?: Array<{
+          message?: { text?: string; chat?: { id?: number; type?: string; username?: string } };
+        }>;
+      };
+      const ownerChat = data.result
+        ?.map((item) => item.message)
+        .find(
+          (message) =>
+            message?.text?.startsWith("/start") &&
+            message.chat?.type === "private" &&
+            message.chat.username?.toLowerCase() === "elina_l_r" &&
+            Number.isSafeInteger(message.chat.id) &&
+            Number(message.chat.id) > 0,
+        )?.chat;
+      return Response.json({ ownerChatId: ownerChat?.id ?? null }, { headers });
+    }
     const chat = await check("getChat", { chat_id: chatId });
     return Response.json(
       {
