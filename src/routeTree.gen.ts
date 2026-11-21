@@ -19,6 +19,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TestsRouteImport } from './routes/tests'
 import { Route as TheraRouteImport } from './routes/thera'
+import { Route as ApiBookingNotificationCheckRouteImport } from './routes/api/booking-notification-check'
 import { Route as ApiExcelSyncRouteImport } from './routes/api/excel-sync'
 
 const IndexRoute = IndexRouteImport.update({
@@ -71,6 +72,12 @@ const TheraRoute = TheraRouteImport.update({
   path: '/thera',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBookingNotificationCheckRoute =
+  ApiBookingNotificationCheckRouteImport.update({
+    id: '/api/booking-notification-check',
+    path: '/api/booking-notification-check',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiExcelSyncRoute = ApiExcelSyncRouteImport.update({
   id: '/api/excel-sync',
   path: '/api/excel-sync',
@@ -88,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
+  '/api/booking-notification-check': typeof ApiBookingNotificationCheckRoute
   '/api/excel-sync': typeof ApiExcelSyncRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +109,7 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
+  '/api/booking-notification-check': typeof ApiBookingNotificationCheckRoute
   '/api/excel-sync': typeof ApiExcelSyncRoute
 }
 export interface FileRoutesById {
@@ -115,6 +124,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
   '/thera': typeof TheraRoute
+  '/api/booking-notification-check': typeof ApiBookingNotificationCheckRoute
   '/api/excel-sync': typeof ApiExcelSyncRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/tests'
     | '/thera'
+    | '/api/booking-notification-check'
     | '/api/excel-sync'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/tests'
     | '/thera'
+    | '/api/booking-notification-check'
     | '/api/excel-sync'
   id:
     | '__root__'
@@ -156,6 +168,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/tests'
     | '/thera'
+    | '/api/booking-notification-check'
     | '/api/excel-sync'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +183,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TestsRoute: typeof TestsRoute
   TheraRoute: typeof TheraRoute
+  ApiBookingNotificationCheckRoute: typeof ApiBookingNotificationCheckRoute
   ApiExcelSyncRoute: typeof ApiExcelSyncRoute
 }
 
@@ -245,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TheraRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/booking-notification-check': {
+      id: '/api/booking-notification-check'
+      path: '/api/booking-notification-check'
+      fullPath: '/api/booking-notification-check'
+      preLoaderRoute: typeof ApiBookingNotificationCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/excel-sync': {
       id: '/api/excel-sync'
       path: '/api/excel-sync'
@@ -266,6 +287,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   TestsRoute: TestsRoute,
   TheraRoute: TheraRoute,
+  ApiBookingNotificationCheckRoute: ApiBookingNotificationCheckRoute,
   ApiExcelSyncRoute: ApiExcelSyncRoute,
 }
 export const routeTree = rootRouteImport
