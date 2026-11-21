@@ -5,6 +5,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { psychologists } from "./site";
 import type { ConsultationStatus } from "./consultations";
+import { notifyOwnerOfBooking } from "./booking-notification.server";
 
 type ConsultationRequest = {
   id: string;
@@ -95,6 +96,7 @@ export const submitConsultationRequest = createServerFn({ method: "POST" })
       if (existing.data) return { id: data.id };
     }
     if (error) throw new Error("Не удалось сохранить заявку.");
+    await notifyOwnerOfBooking(data.id);
     return { id: data.id };
   });
 
