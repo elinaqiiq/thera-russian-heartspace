@@ -1,6 +1,6 @@
 export const consultationStatuses = {
   pending: "Ожидает подтверждения",
-  confirmed: "Подтверждена",
+  confirmed: "Встреча подтверждена",
   declined: "Отклонена",
   cancelled: "Отменена",
   completed: "Консультация завершена",

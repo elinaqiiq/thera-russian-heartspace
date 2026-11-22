@@ -112,6 +112,10 @@ function BookingDesk({ userId }: { userId: string }) {
           </p>
         )}
       </div>
+      {bookings.data.length > 0 &&
+        !bookings.data.some((booking) => booking.status === "pending") && (
+          <p className="mb-4 text-sm text-muted-foreground">Новых заявок на подтверждение нет.</p>
+        )}
       {bookings.data.length === 0 ? (
         <p>Заявок пока нет.</p>
       ) : (
