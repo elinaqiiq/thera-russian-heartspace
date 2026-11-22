@@ -190,6 +190,13 @@ export type Database = {
         Args: { request_id: string }
         Returns: boolean
       }
+      thera_clinician_options: {
+        Args: never
+        Returns: {
+          id: string
+          label: string
+        }[]
+      }
       thera_registry_export: { Args: never; Returns: Json }
     }
     Enums: {

@@ -112,7 +112,7 @@ export const getProgressNotes = createServerFn({ method: "GET" })
         .select("*")
         .order("shared_at", { ascending: false })
         .limit(100),
-      client.from("thera_clinicians").select("id,label").order("label"),
+      (context.supabase as any).rpc("thera_clinician_options"),
     ]);
     if (notes.error || clinicians.error) throw new Error("Не удалось загрузить сводки.");
     return { notes: notes.data, clinicians: clinicians.data };

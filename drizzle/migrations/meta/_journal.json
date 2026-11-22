@@ -15,6 +15,13 @@
       "when": 1795111281579,
       "tag": "0001_private_user_profiles",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795362346807,
+      "tag": "0002_restrict_clinician_directory",
+      "breakpoints": true
     }
   ]
 }
