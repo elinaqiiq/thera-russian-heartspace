@@ -6,13 +6,18 @@ import { entrySchema, profileSchema } from './wellbeing';
 
 export const getJournal = createServerFn({ method: 'GET' }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
   setResponseHeader('Cache-Control', 'no-store');
-  const [entries, profile] = await Promise.all([
-    context.supabase.from('emotion_entries').select('*').eq('user_id', context.userId).order('created_at', { ascending: false }).limit(50),
-    context.supabase.from('profiles').select('*').eq('id', context.userId).maybeSingle(),
-  ]);
-  if (entries.error || profile.error) throw new Error('Не удалось загрузить дневник');
-  return { entries: entries.data, profile: profile.data };
+  const entries = await context.supabase.from('emotion_entries').select('*').eq('user_id', context.userId).order('created_at', { ascending: false }).limit(50);
+  if (entries.error) throw new Error('Не удалось загрузить дневник');
+  return { entries: entries.data };
 });
+
+export const getProfile = createServerFn({ method: 'GET' }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
+  setResponseHeader('Cache-Control', 'private, no-store');
+  const { data, error } = await context.supabase.from('profiles').select('display_name, avatar_data').eq('id', context.userId).maybeSingle();
+  if (error) throw new Error('Не удалось загрузить профиль');
+  return data;
+});
+
 export const saveEntry = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).inputValidator((data: unknown) => entrySchema.parse(data)).handler(async ({ data, context }) => {
   const { error } = await context.supabase.from('emotion_entries').insert({ ...data, user_id: context.userId });
   if (error) throw new Error('Не удалось сохранить запись');

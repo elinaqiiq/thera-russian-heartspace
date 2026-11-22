@@ -29,11 +29,11 @@ export function PsychologistTelegramLink({ specialist }: { specialist: Psycholog
             if (event.button === 1) trackVisit();
           }}
         >
-          <Send size={16} aria-hidden="true" /> Записаться в Telegram
+          <Send size={16} aria-hidden="true" /> Написать психологу в Telegram
         </a>
       </Button>
       <p id={`telegram-visit-${specialist.id}`} className="text-xs leading-5 text-muted-foreground">
-        Если ты вошёл в аккаунт, переход будет отмечен в отчёте владельца сайта.
+        Если ты вошёл в аккаунт, сайт сохранит отметку о переходе.
       </p>
     </>
   );

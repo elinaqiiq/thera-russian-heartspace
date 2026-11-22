@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Menu, X, Sparkles } from "lucide-react";
+import { UserRound, Menu, X, Sparkles } from "lucide-react";
 import { useRef, useState, type ReactNode } from "react";
 import { navItems } from "@/lib/site";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </nav>
           <Button asChild variant="soft" className="ml-auto hidden h-11 lg:inline-flex">
             <Link to="/journal">
-              <BookOpen aria-hidden="true" /> Дневник
+              <UserRound aria-hidden="true" /> Мой профиль
             </Link>
           </Button>
           <Button
@@ -63,7 +63,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           className={open ? "container-site mobile-navigation grid gap-1 pb-4 lg:hidden" : "hidden"}
           aria-label="Мобильное меню"
         >
-          {[...navItems, { to: "/journal", label: "Дневник" } as const].map((item) => (
+          {[...navItems, { to: "/journal", label: "Мой профиль" } as const].map((item) => (
             <Link
               key={item.to}
               to={item.to}

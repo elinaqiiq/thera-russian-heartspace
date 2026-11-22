@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
 import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Save, Trash2, UserRound, Upload } from 'lucide-react';
+import { Save, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getJournal, saveEntry, deleteEntry, saveProfile } from '@/lib/journal.functions';
-import { emotions, moods, entrySchema, profileSchema } from '@/lib/wellbeing';
+import { getJournal, saveEntry, deleteEntry } from '@/lib/journal.functions';
+import { emotions, moods, entrySchema } from '@/lib/wellbeing';
 import { VoiceNote, type VoiceData } from './voice-note';
 import { useAuthState } from './auth-state';
 
@@ -17,10 +17,9 @@ export function JournalEditor() {
 function Editor({ userId }: { userId: string }) {
   const { data } = useSuspenseQuery(journalOptions(userId));
   const queryClient = useQueryClient();
-  const save = useServerFn(saveEntry); const remove = useServerFn(deleteEntry); const updateProfile = useServerFn(saveProfile);
+  const save = useServerFn(saveEntry); const remove = useServerFn(deleteEntry);
   const [mood, setMood] = useState(3); const [emotion, setEmotion] = useState('Спокойствие');
   const [note, setNote] = useState(''); const [voice, setVoice] = useState<VoiceData | null>(null);
-  const [name, setName] = useState(data.profile?.display_name ?? ''); const [photo, setPhoto] = useState(data.profile?.avatar_data ?? null);
   const [busy, setBusy] = useState(false); const [message, setMessage] = useState(''); const [confirmId, setConfirmId] = useState<string | null>(null);
   const refresh = () => queryClient.invalidateQueries({ queryKey: ['journal', userId] });
   async function submit(e: React.FormEvent) {
@@ -30,28 +29,11 @@ function Editor({ userId }: { userId: string }) {
       await save({ data: input }); await refresh(); setNote(''); setVoice(null); setMessage('Запись сохранена');
     } catch { setMessage('Не удалось сохранить запись. Попробуй позже.'); } finally { setBusy(false); }
   }
-  async function profile(e: React.FormEvent) {
-    e.preventDefault(); setBusy(true);
-    try { await updateProfile({ data: profileSchema.parse({ display_name: name, avatar_data: photo }) }); await refresh(); setMessage('Профиль сохранён'); }
-    catch { setMessage('Не удалось сохранить профиль'); } finally { setBusy(false); }
-  }
-  async function upload(file?: File) {
-    if (!file) return;
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 500000) { setMessage('Выбери JPG, PNG или WebP до 500 КБ.'); return; }
-    const reader = new FileReader(); reader.onload = () => { if (typeof reader.result === 'string') setPhoto(reader.result); }; reader.readAsDataURL(file);
-  }
   async function deleteOne(id: string) {
     setBusy(true);
     try { await remove({ data: { id } }); await refresh(); setConfirmId(null); setMessage('Запись удалена'); } catch { setMessage('Не удалось удалить запись'); } finally { setBusy(false); }
   }
   return <>
-    <form onSubmit={profile} className="mb-10 flex flex-wrap items-center gap-4 border-b border-border pb-8">
-      {photo ? <img alt="Фото профиля" src={photo} className="h-16 w-16 rounded-full object-cover" /> : <span className="feature-icon"><UserRound /></span>}
-      <label className="min-w-0 flex-1 text-sm">Твоё имя<input aria-label="Твоё имя" className="field mt-2" value={name} maxLength={100} onChange={e => setName(e.target.value)} /></label>
-      <label className="cursor-pointer text-sm text-accent flex items-center gap-2"><Upload size={16} />Фото<input type="file" aria-label="Фото профиля" className="sr-only" accept="image/jpeg,image/png,image/webp" onChange={e => void upload(e.target.files?.[0])} /></label>
-      {photo && <Button type="button" variant="ghost" size="icon" aria-label="Убрать фото" onClick={() => setPhoto(null)}><Trash2 /></Button>}
-      <Button variant="outline" disabled={busy}><Save />Сохранить профиль</Button>
-    </form>
     <div className="grid gap-12 lg:grid-cols-[1fr_1fr]">
       <form onSubmit={submit} className="space-y-6">
         <div><p className="eyebrow">Новая запись</p><h2 className="mt-3 text-2xl font-semibold">Как ты сейчас?</h2></div>
