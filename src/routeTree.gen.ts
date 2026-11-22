@@ -14,6 +14,7 @@ import { Route as BookingDeskRouteImport } from './routes/booking-desk'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as PracticesRouteImport } from './routes/practices'
+import { Route as PremiumPreviewRouteImport } from './routes/premium-preview'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PsychologistsRouteImport } from './routes/psychologists'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -45,6 +46,11 @@ const JournalRoute = JournalRouteImport.update({
 const PracticesRoute = PracticesRouteImport.update({
   id: '/practices',
   path: '/practices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PremiumPreviewRoute = PremiumPreviewRouteImport.update({
+  id: '/premium-preview',
+  path: '/premium-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
+  '/premium-preview': typeof PremiumPreviewRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
+  '/premium-preview': typeof PremiumPreviewRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
+  '/premium-preview': typeof PremiumPreviewRoute
   '/pricing': typeof PricingRoute
   '/psychologists': typeof PsychologistsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/journal'
     | '/practices'
+    | '/premium-preview'
     | '/pricing'
     | '/psychologists'
     | '/reset-password'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/journal'
     | '/practices'
+    | '/premium-preview'
     | '/pricing'
     | '/psychologists'
     | '/reset-password'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/journal'
     | '/practices'
+    | '/premium-preview'
     | '/pricing'
     | '/psychologists'
     | '/reset-password'
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   HowItWorksRoute: typeof HowItWorksRoute
   JournalRoute: typeof JournalRoute
   PracticesRoute: typeof PracticesRoute
+  PremiumPreviewRoute: typeof PremiumPreviewRoute
   PricingRoute: typeof PricingRoute
   PsychologistsRoute: typeof PsychologistsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/practices'
       fullPath: '/practices'
       preLoaderRoute: typeof PracticesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/premium-preview': {
+      id: '/premium-preview'
+      path: '/premium-preview'
+      fullPath: '/premium-preview'
+      preLoaderRoute: typeof PremiumPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -281,6 +301,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksRoute: HowItWorksRoute,
   JournalRoute: JournalRoute,
   PracticesRoute: PracticesRoute,
+  PremiumPreviewRoute: PremiumPreviewRoute,
   PricingRoute: PricingRoute,
   PsychologistsRoute: PsychologistsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
