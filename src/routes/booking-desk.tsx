@@ -40,7 +40,7 @@ function BookingDeskPage() {
           ) : user ? (
             <BookingDesk key={user.id} userId={user.id} />
           ) : (
-            <AuthPanel bookingDesk />
+            <AuthPanel ownerArea="/booking-desk" />
           )}
         </ClientOnly>
       </section>

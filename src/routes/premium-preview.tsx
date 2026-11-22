@@ -32,7 +32,7 @@ function PremiumPreviewPage() {
           ) : user ? (
             <OwnerPreview key={user.id} userId={user.id} />
           ) : (
-            <AuthPanel />
+            <AuthPanel ownerArea="/premium-preview" />
           )}
         </ClientOnly>
       </section>

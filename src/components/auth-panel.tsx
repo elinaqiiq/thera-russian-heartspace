@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 
 export function AuthPanel({
   booking = false,
-  bookingDesk = false,
+  ownerArea,
 }: {
   booking?: boolean;
-  bookingDesk?: boolean;
+  ownerArea?: "/booking-desk" | "/premium-preview";
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
@@ -20,11 +20,7 @@ export function AuthPanel({
   const [message, setMessage] = useState("");
   const [showResend, setShowResend] = useState(false);
   const emailField = useRef<HTMLInputElement>(null);
-  const accountPath = bookingDesk
-    ? "/booking-desk"
-    : booking
-      ? "/journal?next=consultation"
-      : "/journal";
+  const accountPath = ownerArea ?? (booking ? "/journal?next=consultation" : "/journal");
   const resetPath = booking ? "/reset-password?next=consultation" : "/reset-password";
 
   function authError(error: unknown) {
@@ -128,7 +124,7 @@ export function AuthPanel({
             : "Войти в TherapyAI"}
       </h2>
       <p className="mt-3 text-sm leading-7 text-muted-foreground">
-        {bookingDesk
+        {ownerArea
           ? "Войди в аккаунт владельца Thera."
           : "Аккаунт нужен для личного дневника и подачи заявки на консультацию."}
       </p>
@@ -172,7 +168,7 @@ export function AuthPanel({
         </Button>
       </form>
       <div className="mt-4 flex flex-wrap gap-2">
-        {bookingDesk && mode === "reset" ? (
+        {ownerArea && mode === "reset" ? (
           <Button
             variant="link"
             onClick={() => {
@@ -183,7 +179,7 @@ export function AuthPanel({
             Вернуться ко входу
           </Button>
         ) : (
-          !bookingDesk && (
+          !ownerArea && (
             <Button
               variant="link"
               onClick={() => {
