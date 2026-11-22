@@ -42,7 +42,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
   useEffect(() => {
     // After a new publish, old page files disappear; reload once to fetch the fresh version.
-    if (/Failed to fetch dynamically imported module|Importing a module script failed/.test(String(error?.message))) {
+    if (/Failed to fetch dynamically imported module|Importing a module script failed/.test(String((error as Error | undefined)?.message))) {
       const key = "chunk-reload";
       if (!sessionStorage.getItem(key)) {
         sessionStorage.setItem(key, "1");
