@@ -65,12 +65,132 @@ export type Database = {
         }
         Relationships: []
       }
+      thera_clinicians: {
+        Row: {
+          id: string
+          label: string
+        }
+        Insert: {
+          id: string
+          label: string
+        }
+        Update: {
+          id?: string
+          label?: string
+        }
+        Relationships: []
+      }
+      thera_consultation_requests: {
+        Row: {
+          created_at: string
+          id: string
+          requested_start: string | null
+          specialist_id: string
+          status: string
+          telegram_username: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          requested_start?: string | null
+          specialist_id: string
+          status?: string
+          telegram_username?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          requested_start?: string | null
+          specialist_id?: string
+          status?: string
+          telegram_username?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      thera_progress_notes: {
+        Row: {
+          clinician_id: string
+          id: string
+          period_end: string
+          period_start: string
+          shared_at: string
+          summary: string
+          user_id: string
+        }
+        Insert: {
+          clinician_id: string
+          id: string
+          period_end: string
+          period_start: string
+          shared_at?: string
+          summary: string
+          user_id: string
+        }
+        Update: {
+          clinician_id?: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          shared_at?: string
+          summary?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thera_progress_notes_clinician_id_fkey"
+            columns: ["clinician_id"]
+            isOneToOne: false
+            referencedRelation: "thera_clinicians"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      thera_psychologist_visits: {
+        Row: {
+          created_at: string
+          id: string
+          specialist_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          specialist_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          specialist_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      thera_registry_admins: {
+        Row: {
+          user_id: string
+        }
+        Insert: {
+          user_id: string
+        }
+        Update: {
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      thera_cancel_consultation: {
+        Args: { request_id: string }
+        Returns: boolean
+      }
+      thera_registry_export: { Args: never; Returns: Json }
     }
     Enums: {
       [_ in never]: never
