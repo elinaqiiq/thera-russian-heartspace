@@ -7,7 +7,13 @@ import { Button } from "@/components/ui/button";
 import { consultationStart, consultationStatuses } from "@/lib/consultations";
 import { submitConsultationRequest } from "@/lib/registry.functions";
 
-export function ConsultationRequest({ specialistId }: { specialistId: string }) {
+export function ConsultationRequest({
+  specialistId,
+  initiallyOpen = false,
+}: {
+  specialistId: string;
+  initiallyOpen?: boolean;
+}) {
   const { ready, user } = useAuthState();
   if (!ready) return null;
   if (!user)
@@ -19,10 +25,25 @@ export function ConsultationRequest({ specialistId }: { specialistId: string }) 
         для отправки заявки с сайта.
       </p>
     );
-  return <RequestForm key={user.id} specialistId={specialistId} userId={user.id} />;
+  return (
+    <RequestForm
+      key={user.id}
+      specialistId={specialistId}
+      userId={user.id}
+      initiallyOpen={initiallyOpen}
+    />
+  );
 }
 
-function RequestForm({ specialistId, userId }: { specialistId: string; userId: string }) {
+function RequestForm({
+  specialistId,
+  userId,
+  initiallyOpen,
+}: {
+  specialistId: string;
+  userId: string;
+  initiallyOpen: boolean;
+}) {
   const queryClient = useQueryClient();
   const submit = useServerFn(submitConsultationRequest);
   const id = useRef<string>(undefined);
@@ -80,7 +101,7 @@ function RequestForm({ specialistId, userId }: { specialistId: string; userId: s
     );
 
   return (
-    <details className="border-t border-border pt-3">
+    <details open={initiallyOpen || undefined} className="border-t border-border pt-3">
       <summary className="cursor-pointer text-sm font-semibold">Оставить заявку на сайте</summary>
       <form className="mt-3 space-y-3" onSubmit={send}>
         <p className="text-sm text-muted-foreground">

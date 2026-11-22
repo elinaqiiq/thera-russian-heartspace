@@ -11,9 +11,12 @@ export const Route = createFileRoute("/psychologists")({
       "Психологи",
       "Платные консультации с психологами. Стоимость в тенге и запись через Telegram.",
     ),
+  validateSearch: (search): { rebook?: true } =>
+    search["rebook"] === true ? { rebook: true } : {},
   component: Psychologists,
 });
 function Psychologists() {
+  const { rebook } = Route.useSearch();
   return (
     <>
       <PageIntro eyebrow="Профессиональная помощь" title="Консультация с психологом">
@@ -84,7 +87,7 @@ function Psychologists() {
                       {p.phone.display}
                     </a>
                   </p>
-                  <ConsultationRequest specialistId={p.id} />
+                  <ConsultationRequest specialistId={p.id} initiallyOpen={rebook === true} />
                   <Link
                     to="/journal"
                     search={{}}

@@ -8,7 +8,11 @@ import { useAuthState } from "@/components/auth-state";
 import { PageIntro } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
 import { loadBookingDesk, decideBooking } from "@/lib/booking-desk.functions";
-import { consultationStatuses, consultationTimeZone } from "@/lib/consultations";
+import {
+  consultationStatuses,
+  consultationTimeZone,
+  type BookingDecision,
+} from "@/lib/consultations";
 
 export const Route = createFileRoute("/booking-desk")({
   head: () => ({
@@ -31,7 +35,7 @@ function BookingDeskPage() {
   return (
     <>
       <PageIntro eyebrow="Thera" title="Заявки на консультацию">
-        Подтверждай время и принимай решения по заявкам.
+        Подтверждай заявки и отмечай, как прошли встречи.
       </PageIntro>
       <section className="container-site pb-20">
         <ClientOnly fallback={<p role="status">Проверяем вход…</p>}>
@@ -56,12 +60,12 @@ function BookingDesk({ userId }: { userId: string }) {
   const [notice, setNotice] = useState("");
   const bookings = useQuery({ queryKey, queryFn: () => load() });
   const decision = useMutation({
-    mutationFn: (data: { id: string; decision: "confirmed" | "declined" }) => decide({ data }),
+    mutationFn: (data: { id: string; decision: BookingDecision }) => decide({ data }),
     onSuccess: async (result, input) => {
       const messages = {
-        saved: input.decision === "confirmed" ? "Заявка подтверждена." : "Заявка отклонена.",
+        saved: `${consultationStatuses[input.decision]}.`,
         slot_taken: "На это время уже есть подтверждённая заявка.",
-        unavailable: "Заявка уже обработана или время больше недоступно.",
+        unavailable: "Действие сейчас недоступно. Проверь время встречи и новый статус заявки.",
         denied: "Доступ к заявкам закрыт.",
         invalid: "Не удалось изменить статус.",
       };
@@ -73,6 +77,11 @@ function BookingDesk({ userId }: { userId: string }) {
     },
     onError: () => setNotice("Не удалось изменить статус. Попробуй ещё раз."),
   });
+
+  function updateStatus(id: string, nextStatus: BookingDecision) {
+    setNotice("");
+    decision.mutate({ id, decision: nextStatus });
+  }
 
   if (bookings.isPending) return <p role="status">Загружаем заявки…</p>;
   if (bookings.isError)
@@ -141,10 +150,7 @@ function BookingDesk({ userId }: { userId: string }) {
                       !booking.requested_start ||
                       Date.parse(booking.requested_start) <= Date.now()
                     }
-                    onClick={() => {
-                      setNotice("");
-                      decision.mutate({ id: booking.request_id, decision: "confirmed" });
-                    }}
+                    onClick={() => updateStatus(booking.request_id, "confirmed")}
                   >
                     <Check aria-hidden="true" /> Подтвердить
                   </Button>
@@ -152,15 +158,34 @@ function BookingDesk({ userId }: { userId: string }) {
                     type="button"
                     variant="outline"
                     disabled={decision.isPending}
-                    onClick={() => {
-                      setNotice("");
-                      decision.mutate({ id: booking.request_id, decision: "declined" });
-                    }}
+                    onClick={() => updateStatus(booking.request_id, "declined")}
                   >
                     <X aria-hidden="true" /> Отклонить
                   </Button>
                 </div>
               )}
+              {booking.status === "confirmed" &&
+                booking.requested_start &&
+                Date.parse(booking.requested_start) <= Date.now() && (
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      variant="hero"
+                      disabled={decision.isPending}
+                      onClick={() => updateStatus(booking.request_id, "completed")}
+                    >
+                      <Check aria-hidden="true" /> Завершить консультацию
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={decision.isPending}
+                      onClick={() => updateStatus(booking.request_id, "no_show")}
+                    >
+                      Встреча не состоялась
+                    </Button>
+                  </div>
+                )}
             </li>
           ))}
         </ul>

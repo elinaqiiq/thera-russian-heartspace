@@ -3,9 +3,14 @@ export const consultationStatuses = {
   confirmed: "Подтверждена",
   declined: "Отклонена",
   cancelled: "Отменена",
+  completed: "Консультация завершена",
+  no_show: "Встреча не состоялась",
 } as const;
 
 export type ConsultationStatus = keyof typeof consultationStatuses;
+
+export const bookingDecisions = ["confirmed", "declined", "completed", "no_show"] as const;
+export type BookingDecision = (typeof bookingDecisions)[number];
 
 export const consultationTimeZone = "Asia/Almaty";
 

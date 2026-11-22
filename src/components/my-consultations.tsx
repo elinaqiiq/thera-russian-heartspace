@@ -76,6 +76,18 @@ export function MyConsultations({ userId }: { userId: string }) {
                     ? `${almatyDateTime.format(new Date(request.requested_start))} · Алматы`
                     : "Время не указано"}
                 </p>
+                {request.status === "completed" && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button asChild size="sm" variant="soft">
+                      <a href="#journal-entries">Сделать заметку в дневнике</a>
+                    </Button>
+                    <Button asChild size="sm" variant="outline">
+                      <Link to="/psychologists" search={{ rebook: true }} hash="consultation">
+                        Записаться повторно
+                      </Link>
+                    </Button>
+                  </div>
+                )}
                 {canCancel &&
                   (selectedId === request.id ? (
                     <div className="mt-2 flex flex-wrap items-center gap-2">

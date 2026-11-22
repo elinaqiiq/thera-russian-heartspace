@@ -2,12 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { bookingDecisions } from "./consultations";
 import { registryDatabase } from "./registry.functions";
 
 const bookingList = z.array(
   z.object({
     request_id: z.string().uuid(),
-    status: z.enum(["pending", "confirmed", "declined", "cancelled"]),
+    status: z.enum(["pending", "confirmed", "declined", "cancelled", "completed", "no_show"]),
     display_name: z.string().nullable(),
     email: z.string().nullable(),
     telegram_username: z.string().nullable(),
@@ -30,7 +31,7 @@ export const decideBooking = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
       id: z.string().uuid(),
-      decision: z.enum(["confirmed", "declined"]),
+      decision: z.enum(bookingDecisions),
     }),
   )
   .handler(async ({ context, data }) => {
