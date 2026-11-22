@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BookingDeskRouteImport } from './routes/booking-desk'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as PracticesRouteImport } from './routes/practices'
@@ -24,6 +25,11 @@ import { Route as ApiExcelSyncRouteImport } from './routes/api/excel-sync'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingDeskRoute = BookingDeskRouteImport.update({
+  id: '/booking-desk',
+  path: '/booking-desk',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -79,6 +85,7 @@ const ApiExcelSyncRoute = ApiExcelSyncRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/booking-desk': typeof BookingDeskRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/booking-desk': typeof BookingDeskRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/booking-desk': typeof BookingDeskRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/booking-desk'
     | '/how-it-works'
     | '/journal'
     | '/practices'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/booking-desk'
     | '/how-it-works'
     | '/journal'
     | '/practices'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/booking-desk'
     | '/how-it-works'
     | '/journal'
     | '/practices'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BookingDeskRoute: typeof BookingDeskRoute
   HowItWorksRoute: typeof HowItWorksRoute
   JournalRoute: typeof JournalRoute
   PracticesRoute: typeof PracticesRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking-desk': {
+      id: '/booking-desk'
+      path: '/booking-desk'
+      fullPath: '/booking-desk'
+      preLoaderRoute: typeof BookingDeskRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -257,6 +277,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BookingDeskRoute: BookingDeskRoute,
   HowItWorksRoute: HowItWorksRoute,
   JournalRoute: JournalRoute,
   PracticesRoute: PracticesRoute,

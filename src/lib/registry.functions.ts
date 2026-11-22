@@ -39,6 +39,8 @@ type RegistryDatabase = {
     };
     Views: Record<never, never>;
     Functions: {
+      thera_crm_list: { Args: Record<never, never>; Returns: unknown };
+      thera_crm_decide: { Args: { request_id: string; decision: string }; Returns: string };
       thera_registry_export: { Args: Record<never, never>; Returns: unknown };
       thera_cancel_consultation: { Args: { request_id: string }; Returns: boolean };
     };

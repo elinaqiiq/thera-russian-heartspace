@@ -5,7 +5,13 @@ import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
-export function AuthPanel({ booking = false }: { booking?: boolean }) {
+export function AuthPanel({
+  booking = false,
+  bookingDesk = false,
+}: {
+  booking?: boolean;
+  bookingDesk?: boolean;
+}) {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
   const [email, setEmail] = useState("");
@@ -14,7 +20,11 @@ export function AuthPanel({ booking = false }: { booking?: boolean }) {
   const [message, setMessage] = useState("");
   const [showResend, setShowResend] = useState(false);
   const emailField = useRef<HTMLInputElement>(null);
-  const journalPath = booking ? "/journal?next=consultation" : "/journal";
+  const accountPath = bookingDesk
+    ? "/booking-desk"
+    : booking
+      ? "/journal?next=consultation"
+      : "/journal";
   const resetPath = booking ? "/reset-password?next=consultation" : "/reset-password";
 
   function authError(error: unknown) {
@@ -49,7 +59,7 @@ export function AuthPanel({ booking = false }: { booking?: boolean }) {
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password,
-          options: { emailRedirectTo: `${window.location.origin}${journalPath}` },
+          options: { emailRedirectTo: `${window.location.origin}${accountPath}` },
         });
         if (error) throw error;
         if (!data.session) {
@@ -77,7 +87,7 @@ export function AuthPanel({ booking = false }: { booking?: boolean }) {
       const { error } = await supabase.auth.resend({
         type: "signup",
         email: email.trim(),
-        options: { emailRedirectTo: `${window.location.origin}${journalPath}` },
+        options: { emailRedirectTo: `${window.location.origin}${accountPath}` },
       });
       if (error) throw error;
       setMessage(
@@ -95,7 +105,7 @@ export function AuthPanel({ booking = false }: { booking?: boolean }) {
     setMessage("");
     try {
       const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: `${window.location.origin}${journalPath}`,
+        redirect_uri: `${window.location.origin}${accountPath}`,
       });
       if (result.error) {
         setMessage("Не удалось войти. Попробуй позже.");
@@ -118,7 +128,9 @@ export function AuthPanel({ booking = false }: { booking?: boolean }) {
             : "Войти в TherapyAI"}
       </h2>
       <p className="mt-3 text-sm leading-7 text-muted-foreground">
-        Аккаунт нужен для личного дневника и подачи заявки на консультацию.
+        {bookingDesk
+          ? "Войди в аккаунт владельца Thera."
+          : "Аккаунт нужен для личного дневника и подачи заявки на консультацию."}
       </p>
       <form onSubmit={submit} className="mt-6 space-y-4">
         <label className="block text-sm">
@@ -160,15 +172,29 @@ export function AuthPanel({ booking = false }: { booking?: boolean }) {
         </Button>
       </form>
       <div className="mt-4 flex flex-wrap gap-2">
-        <Button
-          variant="link"
-          onClick={() => {
-            setMode(mode === "signup" ? "login" : "signup");
-            setMessage("");
-          }}
-        >
-          {mode === "signup" ? "Уже есть аккаунт" : "Регистрация"}
-        </Button>
+        {bookingDesk && mode === "reset" ? (
+          <Button
+            variant="link"
+            onClick={() => {
+              setMode("login");
+              setMessage("");
+            }}
+          >
+            Вернуться ко входу
+          </Button>
+        ) : (
+          !bookingDesk && (
+            <Button
+              variant="link"
+              onClick={() => {
+                setMode(mode === "signup" ? "login" : "signup");
+                setMessage("");
+              }}
+            >
+              {mode === "signup" ? "Уже есть аккаунт" : "Регистрация"}
+            </Button>
+          )
+        )}
         <Button
           variant="link"
           onClick={() => {
