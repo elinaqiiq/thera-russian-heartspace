@@ -1,4 +1,4 @@
-export const premiumQuestionnaires = [
+export const additionalQuestionnaires = [
   {
     id: "sleep",
     title: "Сон и восстановление",

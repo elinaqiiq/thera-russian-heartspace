@@ -1,91 +1,43 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { activatePremiumTestsPreview, loadPremiumTests } from "@/lib/premium-tests.functions";
-import { useAuthState } from "@/components/auth-state";
+import { additionalQuestionnaires } from "@/lib/additional-questionnaires";
 
-type Preview = NonNullable<Awaited<ReturnType<typeof loadPremiumTests>>>;
-type Questionnaire = Extract<Preview, { active: true }>["questionnaires"][number];
+type Questionnaire = (typeof additionalQuestionnaires)[number];
 
 const answers = ["Ни разу", "Редко", "Иногда", "Часто"];
 
-export function PremiumTests() {
-  const { user } = useAuthState();
-  return (
-    <div id="premium-tests" className="scroll-mt-24">
-      {user && <OwnerPremiumTests key={user.id} userId={user.id} />}
-    </div>
-  );
-}
-
-function OwnerPremiumTests({ userId }: { userId: string }) {
-  const load = useServerFn(loadPremiumTests);
-  const activate = useServerFn(activatePremiumTestsPreview);
-  const access = useQuery({ queryKey: ["premium-tests", userId], queryFn: () => load() });
-  const purchase = useMutation({ mutationFn: () => activate(), onSuccess: () => access.refetch() });
-  const [cardSelected, setCardSelected] = useState(false);
+export function AdditionalTests() {
   const [selected, setSelected] = useState<Questionnaire["id"] | null>(null);
-  if (!access.data) return null;
+  const questionnaire = additionalQuestionnaires.find((item) => item.id === selected);
 
-  const questionnaire = access.data.active
-    ? access.data.questionnaires.find((item) => item.id === selected)
-    : undefined;
   return (
-    <section className="mt-10 border-t border-border pt-8" aria-labelledby="premium-tests-heading">
-      <h2 id="premium-tests-heading" className="section-title">
-        Расширенный набор тестов
+    <section
+      id="additional-tests"
+      className="mt-10 scroll-mt-24 border-t border-border pt-8"
+      aria-labelledby="additional-tests-heading"
+    >
+      <h2 id="additional-tests-heading" className="section-title">
+        Дополнительные опросники
       </h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Тестовый режим · 2 990 ₸ за 30 дней без автопродления
-      </p>
-      {access.data.active ? (
-        questionnaire ? (
-          <ReflectionCheck
-            key={questionnaire.id}
-            questionnaire={questionnaire}
-            onClose={() => setSelected(null)}
-          />
-        ) : (
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {access.data.questionnaires.map((item) => (
-              <article className="soft-card p-5" key={item.id}>
-                <h3 className="font-semibold">{item.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {item.questions.length} вопроса · около 1 минуты
-                </p>
-                <Button className="mt-4" variant="soft" onClick={() => setSelected(item.id)}>
-                  Пройти опросник
-                </Button>
-              </article>
-            ))}
-          </div>
-        )
+      {questionnaire ? (
+        <ReflectionCheck
+          key={questionnaire.id}
+          questionnaire={questionnaire}
+          onClose={() => setSelected(null)}
+        />
       ) : (
-        <div className="soft-card mt-5 max-w-lg p-5">
-          <p>Открой опросники про сон, перегрузку, внимание и усталость.</p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Оплата имитируется. Данные карты вводить не нужно.
-          </p>
-          {cardSelected ? (
-            <Button
-              className="mt-4"
-              variant="hero"
-              disabled={purchase.isPending}
-              onClick={() => purchase.mutate()}
-            >
-              {purchase.isPending ? "Открываем доступ…" : "Имитировать оплату 2 990 ₸"}
-            </Button>
-          ) : (
-            <Button className="mt-4" variant="soft" onClick={() => setCardSelected(true)}>
-              Выбрать тестовую карту
-            </Button>
-          )}
-          {purchase.isError && (
-            <p role="alert" className="mt-3 text-sm text-destructive">
-              Доступ не открылся. Попробуй ещё раз.
-            </p>
-          )}
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          {additionalQuestionnaires.map((item) => (
+            <article className="soft-card p-5" key={item.id}>
+              <h3 className="font-semibold">{item.title}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {item.questions.length} вопроса · около 1 минуты
+              </p>
+              <Button className="mt-4" variant="soft" onClick={() => setSelected(item.id)}>
+                Пройти опросник
+              </Button>
+            </article>
+          ))}
         </div>
       )}
     </section>

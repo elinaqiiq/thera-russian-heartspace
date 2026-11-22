@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageIntro } from "@/components/site-shell";
-import { PremiumTests } from "@/components/premium-tests";
+import { AdditionalTests } from "@/components/additional-tests";
 import { PsychologicalTests } from "@/components/psychological-tests";
 import { pageHead } from "@/lib/site";
 export const Route = createFileRoute("/tests")({
@@ -24,7 +24,7 @@ function Tests() {
           Опросники не ставят диагнозы и не заменяют профессиональную помощь. Ответы не сохраняются
           и не отправляются психологу. При обновлении страницы они исчезнут.
         </p>
-        <PremiumTests />
+        <AdditionalTests />
       </section>
     </>
   );

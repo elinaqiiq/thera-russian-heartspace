@@ -101,7 +101,7 @@ function Psychologists() {
         <SessionPrep />
         <p className="mt-8 max-w-2xl text-xs leading-6 text-muted-foreground">
           Чат с Thera бесплатен и не включает консультацию психолога. Переписка с Thera
-          автоматически в заявку не добавляется. Оплата на сайте пока не подключена.
+          автоматически в заявку не добавляется.
         </p>
       </section>
     </>

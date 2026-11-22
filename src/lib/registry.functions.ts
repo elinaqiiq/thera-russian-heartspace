@@ -39,7 +39,6 @@ type RegistryDatabase = {
     };
     Views: Record<never, never>;
     Functions: {
-      thera_premium_preview_access: { Args: { consume: boolean }; Returns: string };
       thera_crm_list: { Args: Record<never, never>; Returns: unknown };
       thera_crm_decide: { Args: { request_id: string; decision: string }; Returns: string };
       thera_registry_export: { Args: Record<never, never>; Returns: unknown };
