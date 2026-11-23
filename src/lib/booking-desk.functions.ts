@@ -14,6 +14,10 @@ const bookingList = z.array(
     telegram_username: z.string().nullable(),
     requested_start: z.string().nullable(),
     created_at: z.string(),
+    meeting_format: z.enum(["online", "phone", "in_person"]).nullable(),
+    meeting_instructions: z.string().nullable(),
+    reschedule_start: z.string().nullable(),
+    reschedule_status: z.enum(["pending", "accepted", "declined"]).nullable(),
   }),
 );
 
@@ -24,6 +28,48 @@ export const loadBookingDesk = createServerFn({ method: "GET" })
     const { data, error } = await registryDatabase(context.supabase).rpc("thera_crm_list");
     if (error) throw new Error("Не удалось загрузить заявки.");
     return bookingList.nullable().parse(data);
+  });
+
+const decisionResult = z.enum(["saved", "slot_taken", "unavailable", "denied", "invalid"]);
+
+export const saveBookingDetails = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    z.object({
+      id: z.string().uuid(),
+      format: z.enum(["online", "phone", "in_person"]),
+      instructions: z.string().trim().min(1).max(1000),
+    }),
+  )
+  .handler(async ({ context, data }) => {
+    setResponseHeader("Cache-Control", "private, no-store");
+    const result = await registryDatabase(context.supabase).rpc("thera_crm_confirm_details", {
+      request_id: data.id,
+      format: data.format,
+      instructions: data.instructions,
+    });
+    if (result.error) throw new Error("Не удалось сохранить детали.");
+    return decisionResult.parse(result.data);
+  });
+
+export const decideReschedule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    z.object({
+      id: z.string().uuid(),
+      expectedStart: z.string().datetime({ offset: true }),
+      approve: z.boolean(),
+    }),
+  )
+  .handler(async ({ context, data }) => {
+    setResponseHeader("Cache-Control", "private, no-store");
+    const result = await registryDatabase(context.supabase).rpc("thera_crm_reschedule", {
+      request_id: data.id,
+      expected_start: data.expectedStart,
+      approve: data.approve,
+    });
+    if (result.error) throw new Error("Не удалось обработать перенос.");
+    return decisionResult.parse(result.data);
   });
 
 export const decideBooking = createServerFn({ method: "POST" })
@@ -41,5 +87,5 @@ export const decideBooking = createServerFn({ method: "POST" })
       decision: data.decision,
     });
     if (result.error) throw new Error("Не удалось изменить статус.");
-    return z.enum(["saved", "slot_taken", "unavailable", "denied", "invalid"]).parse(result.data);
+    return decisionResult.parse(result.data);
   });

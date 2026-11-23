@@ -23,6 +23,20 @@ export const psychologists: Psychologist[] = [
   },
 ];
 
+export type PsychologistContact = Pick<Psychologist, "id" | "telegramUsername" | "phone">;
+
+export const directPsychologistContacts: Array<
+  PsychologistContact & Pick<Psychologist, "priceKzt" | "durationMinutes">
+> = [
+  {
+    id: "sovunya-ju",
+    telegramUsername: "sovunya_ju",
+    phone: { display: "+7 705 166 11 32", number: "+77051661132" },
+    durationMinutes: 60,
+    priceKzt: 10000,
+  },
+];
+
 export function telegramChatUrl(username: string) {
   return `https://t.me/${username}`;
 }

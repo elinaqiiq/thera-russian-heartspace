@@ -3,7 +3,7 @@ import { ConsultationRequest } from "@/components/consultation-request";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Heart, Clock, Video } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
-import { pageHead, psychologists, formatKzt } from "@/lib/site";
+import { pageHead, psychologists, formatKzt, directPsychologistContacts } from "@/lib/site";
 import { SessionPrep } from "@/components/session-prep";
 export const Route = createFileRoute("/psychologists")({
   head: () =>
@@ -66,8 +66,7 @@ function Psychologists() {
                       .join(" · ")}
                   </p>
                   <p className="mt-4 max-w-lg text-sm leading-6 text-muted-foreground">
-                    После заявки проверь статус в аккаунте. Уточнить детали встречи или договориться
-                    о переносе можно в Telegram.
+                    Статус заявки, детали встречи и запрос на перенос доступны в личном кабинете.
                   </p>
                 </div>
                 <div className="grid gap-3 md:min-w-62">
@@ -101,6 +100,34 @@ function Psychologists() {
             ))}
           </div>
         )}
+        {directPsychologistContacts.map((contact) => (
+          <article key={contact.id} className="soft-card consultation-callout mt-5">
+            <div>
+              <h2 className="text-xl font-semibold">Связаться с другим психологом</h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Договорись об удобном времени напрямую.
+              </p>
+            </div>
+            <div className="grid gap-3 md:min-w-62">
+              <p className="flex flex-wrap items-baseline gap-x-2 font-display text-3xl font-semibold">
+                {formatKzt(contact.priceKzt)}{" "}
+                <span className="text-sm text-muted-foreground">
+                  за {contact.durationMinutes} мин.
+                </span>
+              </p>
+              <PsychologistTelegramLink specialist={contact} />
+              <p className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
+                <span>@{contact.telegramUsername}</span>
+                <a
+                  href={`tel:${contact.phone.number}`}
+                  className="inline-flex min-h-11 items-center underline underline-offset-4"
+                >
+                  {contact.phone.display}
+                </a>
+              </p>
+            </div>
+          </article>
+        ))}
         <SessionPrep />
         <p className="mt-8 max-w-2xl text-xs leading-6 text-muted-foreground">
           Чат с Thera бесплатен и не включает консультацию психолога. Переписка с Thera

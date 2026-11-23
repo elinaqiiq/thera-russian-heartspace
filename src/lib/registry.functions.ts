@@ -3,8 +3,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { psychologists } from "./site";
-import type { ConsultationStatus } from "./consultations";
+import { directPsychologistContacts, psychologists } from "./site";
+import type { ConsultationStatus, MeetingFormat, RescheduleStatus } from "./consultations";
 
 type ConsultationRequest = {
   id: string;
@@ -14,6 +14,10 @@ type ConsultationRequest = {
   created_at: string;
   requested_start: string | null;
   status: ConsultationStatus;
+  meeting_format: MeetingFormat | null;
+  meeting_instructions: string | null;
+  reschedule_start: string | null;
+  reschedule_status: RescheduleStatus | null;
 };
 
 type ConsultationVisit = Pick<
@@ -32,13 +36,28 @@ type RegistryDatabase = {
       };
       thera_consultation_requests: {
         Row: ConsultationRequest;
-        Insert: Omit<ConsultationRequest, "created_at" | "status">;
+        Insert: Pick<
+          ConsultationRequest,
+          "id" | "user_id" | "specialist_id" | "telegram_username" | "requested_start"
+        >;
         Update: Partial<ConsultationRequest>;
         Relationships: [];
       };
     };
     Views: Record<never, never>;
     Functions: {
+      thera_crm_confirm_details: {
+        Args: { request_id: string; format: MeetingFormat; instructions: string };
+        Returns: string;
+      };
+      thera_crm_reschedule: {
+        Args: { request_id: string; expected_start: string; approve: boolean };
+        Returns: string;
+      };
+      thera_request_reschedule: {
+        Args: { request_id: string; proposed_start: string };
+        Returns: string;
+      };
       thera_crm_list: { Args: Record<never, never>; Returns: unknown };
       thera_crm_decide: { Args: { request_id: string; decision: string }; Returns: string };
       thera_registry_export: { Args: Record<never, never>; Returns: unknown };
@@ -106,11 +125,26 @@ export const listConsultationRequests = createServerFn({ method: "GET" })
     privateResponse();
     const { data, error } = await registryDatabase(context.supabase)
       .from("thera_consultation_requests")
-      .select("id, created_at, requested_start, status")
+      .select(
+        "id, created_at, requested_start, status, meeting_format, meeting_instructions, reschedule_start, reschedule_status",
+      )
       .eq("user_id", context.userId)
       .order("created_at", { ascending: false });
     if (error) throw new Error("Не удалось загрузить заявки.");
     return data;
+  });
+
+export const requestReschedule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ id: z.string().uuid(), proposedStart: z.string().datetime() }))
+  .handler(async ({ context, data }) => {
+    privateResponse();
+    const result = await registryDatabase(context.supabase).rpc("thera_request_reschedule", {
+      request_id: data.id,
+      proposed_start: data.proposedStart,
+    });
+    if (result.error) throw new Error("Не удалось отправить запрос на перенос.");
+    return z.enum(["saved", "invalid", "unavailable"]).parse(result.data);
   });
 
 export const cancelConsultationRequest = createServerFn({ method: "POST" })
@@ -132,7 +166,7 @@ export const recordPsychologistVisit = createServerFn({ method: "POST" })
       specialistId: z
         .string()
         .max(80)
-        .refine((id) => psychologists.some((p) => p.id === id)),
+        .refine((id) => [...psychologists, ...directPsychologistContacts].some((p) => p.id === id)),
     }),
   )
   .handler(async ({ context, data }) => {

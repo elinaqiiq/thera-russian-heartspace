@@ -12,6 +12,15 @@ export type ConsultationStatus = keyof typeof consultationStatuses;
 export const bookingDecisions = ["confirmed", "declined", "completed", "no_show"] as const;
 export type BookingDecision = (typeof bookingDecisions)[number];
 
+export const meetingFormats = {
+  online: "Видеозвонок",
+  phone: "Телефон",
+  in_person: "Лично",
+} as const;
+export type MeetingFormat = keyof typeof meetingFormats;
+
+export type RescheduleStatus = "pending" | "accepted" | "declined";
+
 export const consultationTimeZone = "Asia/Almaty";
 
 export function consultationStart(date: string, time: string): string | null {

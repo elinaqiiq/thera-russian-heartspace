@@ -2,9 +2,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import { RescheduleForm } from "@/components/reschedule-form";
 import { Button } from "@/components/ui/button";
-import { consultationStatuses, consultationTimeZone } from "@/lib/consultations";
-import { cancelConsultationRequest, listConsultationRequests } from "@/lib/registry.functions";
+import { consultationStatuses, consultationTimeZone, meetingFormats } from "@/lib/consultations";
+import {
+  cancelConsultationRequest,
+  listConsultationRequests,
+  requestReschedule,
+} from "@/lib/registry.functions";
 
 const almatyDateTime = new Intl.DateTimeFormat("ru-KZ", {
   timeZone: consultationTimeZone,
@@ -17,6 +22,7 @@ export function MyConsultations({ userId }: { userId: string }) {
   const queryKey = ["consultation-requests", userId];
   const list = useServerFn(listConsultationRequests);
   const cancel = useServerFn(cancelConsultationRequest);
+  const propose = useServerFn(requestReschedule);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const requests = useQuery({ queryKey, queryFn: () => list() });
@@ -28,6 +34,21 @@ export function MyConsultations({ userId }: { userId: string }) {
       await queryClient.invalidateQueries({ queryKey });
     },
     onError: () => setNotice("Не удалось отменить заявку. Попробуй ещё раз."),
+  });
+
+  const reschedule = useMutation({
+    mutationFn: (data: { id: string; proposedStart: string }) => propose({ data }),
+    onSuccess: async (result) => {
+      setNotice(
+        result === "saved"
+          ? "Запрос на перенос отправлен. Исходное время сохранено."
+          : result === "invalid"
+            ? "Выбери время в будущем."
+            : "Запрос сейчас недоступен. Проверь статус встречи.",
+      );
+      await queryClient.invalidateQueries({ queryKey });
+    },
+    onError: () => setNotice("Не удалось запросить перенос. Попробуй ещё раз."),
   });
 
   return (
@@ -76,6 +97,50 @@ export function MyConsultations({ userId }: { userId: string }) {
                     ? `${almatyDateTime.format(new Date(request.requested_start))} · Алматы`
                     : "Время не указано"}
                 </p>
+                {request.status === "confirmed" && (
+                  <>
+                    {request.meeting_format && request.meeting_instructions ? (
+                      <div className="mt-2 space-y-1 text-sm">
+                        <p className="font-medium">{meetingFormats[request.meeting_format]}</p>
+                        <MeetingInstructions text={request.meeting_instructions} />
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Психолог пока не добавил детали встречи.
+                      </p>
+                    )}
+                    {request.requested_start &&
+                      Date.parse(request.requested_start) > Date.now() &&
+                      (request.reschedule_status === "pending" && request.reschedule_start ? (
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          Запрошен перенос на{" "}
+                          {almatyDateTime.format(new Date(request.reschedule_start))} · Алматы.
+                          Исходное время действует до подтверждения.
+                        </p>
+                      ) : (
+                        <>
+                          {request.reschedule_status === "declined" && (
+                            <p className="mt-2 text-sm text-muted-foreground">
+                              Перенос отклонён. Исходное время сохранено.
+                            </p>
+                          )}
+                          {request.reschedule_status === "accepted" && (
+                            <p className="mt-2 text-sm text-muted-foreground">
+                              Перенос подтверждён. Выше указано новое время.
+                            </p>
+                          )}
+                          <RescheduleForm
+                            currentStart={request.requested_start}
+                            busy={reschedule.isPending || cancellation.isPending}
+                            onSubmit={(proposedStart) => {
+                              setNotice("");
+                              reschedule.mutate({ id: request.id, proposedStart });
+                            }}
+                          />
+                        </>
+                      ))}
+                  </>
+                )}
                 {request.status === "completed" && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Button asChild size="sm" variant="soft">
@@ -96,7 +161,7 @@ export function MyConsultations({ userId }: { userId: string }) {
                         type="button"
                         size="sm"
                         variant="outline"
-                        disabled={cancellation.isPending}
+                        disabled={cancellation.isPending || reschedule.isPending}
                         onClick={() => cancellation.mutate(request.id)}
                       >
                         Подтвердить отмену
@@ -105,7 +170,7 @@ export function MyConsultations({ userId }: { userId: string }) {
                         type="button"
                         size="sm"
                         variant="ghost"
-                        disabled={cancellation.isPending}
+                        disabled={cancellation.isPending || reschedule.isPending}
                         onClick={() => setSelectedId(null)}
                       >
                         Оставить заявку
@@ -117,7 +182,7 @@ export function MyConsultations({ userId }: { userId: string }) {
                       size="sm"
                       variant="link"
                       className="px-0"
-                      disabled={cancellation.isPending}
+                      disabled={cancellation.isPending || reschedule.isPending}
                       onClick={() => {
                         setNotice("");
                         setSelectedId(request.id);
@@ -137,5 +202,33 @@ export function MyConsultations({ userId }: { userId: string }) {
         </p>
       )}
     </section>
+  );
+}
+
+function MeetingInstructions({ text }: { text: string }) {
+  return (
+    <p className="whitespace-pre-wrap break-words text-muted-foreground">
+      {text.split(/(https:\/\/[^\s<>()]+)/g).map((part, index) => {
+        if (!part.startsWith("https://")) return part;
+        let url: URL;
+        try {
+          url = new URL(part);
+        } catch {
+          return part;
+        }
+        if (url.username || url.password || url.protocol !== "https:") return part;
+        return (
+          <a
+            key={index}
+            href={url.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline"
+          >
+            {part}
+          </a>
+        );
+      })}
+    </p>
   );
 }
