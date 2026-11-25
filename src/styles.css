@@ -269,6 +269,8 @@
   background: radial-gradient(ellipse at top left, var(--card), var(--background));
 }
 .home-hero-content {
+  position: relative;
+  z-index: 1;
   padding: clamp(1.35rem, 5vw, 4.5rem);
   padding-bottom: 0;
 }
@@ -282,15 +284,100 @@
   text-wrap: balance;
 }
 .home-hero-visual {
+  overflow: hidden;
   min-width: 0;
   height: clamp(13rem, 42vw, 20rem);
   mask-image: linear-gradient(to bottom, transparent, black 28%);
 }
+.home-hero-visual picture,
 .home-hero-visual img {
+  display: block;
   width: 100%;
   height: 100%;
+}
+.home-hero-visual img {
   object-fit: cover;
   object-position: right center;
+}
+.home-hero-petals {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero-visual {
+    background: radial-gradient(ellipse at 76% 53%, #282044 0%, #141122 60%, transparent 89%);
+  }
+  .home-hero-visual img {
+    transform-origin: 78% 86%;
+    animation: home-cat-breathe 7s ease-in-out infinite;
+  }
+  .home-hero-petals {
+    display: block;
+    position: absolute;
+    inset: auto 0 0;
+    height: clamp(13rem, 42vw, 20rem);
+    pointer-events: none;
+  }
+  .home-hero-petal {
+    position: absolute;
+    inset-block: 0;
+    width: var(--petal-size);
+    animation: home-petal-fall var(--petal-duration) var(--petal-delay) linear infinite;
+  }
+  .home-hero-petal > span {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    aspect-ratio: 1.45;
+    border-radius: 73% 33% 59% 26%;
+    background: linear-gradient(145deg, #ffe3ef, #cf81bb);
+    opacity: 0.58;
+    animation: home-petal-turn calc(var(--petal-duration) / 2) var(--petal-delay) ease-in-out
+      infinite;
+  }
+  .home-hero-petal:nth-child(3n) > span {
+    opacity: 0.36;
+    background: linear-gradient(145deg, #efe0ff, #a78cd6);
+  }
+}
+@keyframes home-cat-breathe {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.65deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(0.75deg) scale(1.013);
+  }
+}
+@keyframes home-petal-fall {
+  0% {
+    transform: translate(0, -57%);
+  }
+  32% {
+    transform: translate(calc(var(--petal-drift) * 0.65), -19%);
+  }
+  67% {
+    transform: translate(calc(var(--petal-drift) * 0.4), 19%);
+  }
+  100% {
+    transform: translate(var(--petal-drift), 57%);
+  }
+}
+@keyframes home-petal-turn {
+  0%,
+  100% {
+    transform: rotate(-24deg) scaleY(0.8);
+  }
+  50% {
+    transform: rotate(127deg) scaleY(0.46);
+  }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .home-hero-visual img {
+    translate: clamp(-3.25rem, -8vw, -1.5rem) 0;
+  }
+  .home-hero-petal:nth-child(n + 9) {
+    display: none;
+  }
 }
 .home-tool {
   display: flex;
@@ -340,8 +427,6 @@
     align-items: center;
   }
   .home-hero-content {
-    position: relative;
-    z-index: 1;
     width: 66%;
     padding-bottom: clamp(1.35rem, 5vw, 4.5rem);
   }
@@ -351,6 +436,10 @@
     width: 58%;
     height: auto;
     mask-image: linear-gradient(to right, transparent, black 38%);
+  }
+  .home-hero-petals {
+    inset: 0 0 0 40%;
+    height: auto;
   }
   .consultation-callout {
     grid-template-columns: 1fr auto;

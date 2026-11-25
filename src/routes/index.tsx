@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Wind,
 } from "lucide-react";
+import { HomeHeroArtwork } from "@/components/home-hero-artwork";
 import { Button } from "@/components/ui/button";
 import { bookingSubmissionsEnabled, formatKzt, pageHead, psychologists } from "@/lib/site";
 
@@ -68,9 +69,7 @@ function Index() {
             </Button>
           </div>
         </div>
-        <div className="home-hero-visual">
-          <img src="/thera-cat.webp" width={1672} height={941} alt="" fetchPriority="high" />
-        </div>
+        <HomeHeroArtwork />
       </section>
 
       <section
