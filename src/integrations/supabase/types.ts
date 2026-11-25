@@ -84,7 +84,11 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          meeting_format: string | null
+          meeting_instructions: string | null
           requested_start: string | null
+          reschedule_start: string | null
+          reschedule_status: string | null
           specialist_id: string
           status: string
           telegram_username: string | null
@@ -93,7 +97,11 @@ export type Database = {
         Insert: {
           created_at?: string
           id: string
+          meeting_format?: string | null
+          meeting_instructions?: string | null
           requested_start?: string | null
+          reschedule_start?: string | null
+          reschedule_status?: string | null
           specialist_id: string
           status?: string
           telegram_username?: string | null
@@ -102,7 +110,11 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          meeting_format?: string | null
+          meeting_instructions?: string | null
           requested_start?: string | null
+          reschedule_start?: string | null
+          reschedule_status?: string | null
           specialist_id?: string
           status?: string
           telegram_username?: string | null
@@ -183,7 +195,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      thera_crm_bookings: {
+        Row: {
+          display_name: string | null
+          email: string | null
+          request_id: string | null
+          requested_almaty: string | null
+          specialist_id: string | null
+          status: string | null
+          submitted_almaty: string | null
+          telegram_username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       thera_cancel_consultation: {
@@ -197,7 +221,28 @@ export type Database = {
           label: string
         }[]
       }
+      thera_crm_confirm_details: {
+        Args: { format: string; instructions: string; request_id: string }
+        Returns: string
+      }
+      thera_crm_decide: {
+        Args: { decision: string; request_id: string }
+        Returns: string
+      }
+      thera_crm_list: { Args: never; Returns: Json }
+      thera_crm_reschedule: {
+        Args: { approve: boolean; expected_start: string; request_id: string }
+        Returns: string
+      }
+      thera_premium_preview_access: {
+        Args: { consume?: boolean }
+        Returns: string
+      }
       thera_registry_export: { Args: never; Returns: Json }
+      thera_request_reschedule: {
+        Args: { proposed_start: string; request_id: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
