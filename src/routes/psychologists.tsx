@@ -3,7 +3,7 @@ import { ConsultationRequest } from "@/components/consultation-request";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Heart, Clock, Video } from "lucide-react";
 import { PageIntro } from "@/components/site-shell";
-import { pageHead, psychologists, formatKzt, directPsychologistContacts } from "@/lib/site";
+import { pageHead, psychologists, formatKzt, findPsychologist } from "@/lib/site";
 import { SessionPrep } from "@/components/session-prep";
 export const Route = createFileRoute("/psychologists")({
   head: () =>
@@ -11,12 +11,18 @@ export const Route = createFileRoute("/psychologists")({
       "Психологи",
       "Платные консультации с психологами. Стоимость в тенге и запись через Telegram.",
     ),
-  validateSearch: (search): { rebook?: true } =>
-    search["rebook"] === true ? { rebook: true } : {},
+  validateSearch: (search): { rebook?: true; specialist?: string } => {
+    const specialist = findPsychologist(search["specialist"]);
+    return {
+      ...(search["rebook"] === true ? { rebook: true } : {}),
+      ...(specialist ? { specialist: specialist.id } : {}),
+    };
+  },
   component: Psychologists,
 });
 function Psychologists() {
-  const { rebook } = Route.useSearch();
+  const { rebook, specialist } = Route.useSearch();
+  const openBookingFor = specialist ?? (rebook ? psychologists[0]?.id : undefined);
   return (
     <>
       <PageIntro eyebrow="Профессиональная помощь" title="Консультация с психологом">
@@ -55,7 +61,9 @@ function Psychologists() {
                       className="mb-5 h-28 w-28 rounded-2xl object-cover"
                     />
                   )}
-                  <h2 className="text-xl font-semibold">{p.name ?? "Консультация с психологом"}</h2>
+                  <h2 className="text-xl font-semibold">
+                    {p.name ?? `Психолог @${p.telegramUsername}`}
+                  </h2>
                   {p.qualification && (
                     <p className="mt-3 text-muted-foreground">{p.qualification}</p>
                   )}
@@ -86,7 +94,10 @@ function Psychologists() {
                       {p.phone.display}
                     </a>
                   </p>
-                  <ConsultationRequest specialistId={p.id} initiallyOpen={rebook === true} />
+                  <ConsultationRequest
+                    specialistId={p.id}
+                    initiallyOpen={openBookingFor === p.id}
+                  />
                   <Link
                     to="/journal"
                     search={{}}
@@ -100,34 +111,6 @@ function Psychologists() {
             ))}
           </div>
         )}
-        {directPsychologistContacts.map((contact) => (
-          <article key={contact.id} className="soft-card consultation-callout mt-5">
-            <div>
-              <h2 className="text-xl font-semibold">Связаться с другим психологом</h2>
-              <p className="mt-3 text-sm text-muted-foreground">
-                Договорись об удобном времени напрямую.
-              </p>
-            </div>
-            <div className="grid gap-3 md:min-w-62">
-              <p className="flex flex-wrap items-baseline gap-x-2 font-display text-3xl font-semibold">
-                {formatKzt(contact.priceKzt)}{" "}
-                <span className="text-sm text-muted-foreground">
-                  за {contact.durationMinutes} мин.
-                </span>
-              </p>
-              <PsychologistTelegramLink specialist={contact} />
-              <p className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
-                <span>@{contact.telegramUsername}</span>
-                <a
-                  href={`tel:${contact.phone.number}`}
-                  className="inline-flex min-h-11 items-center underline underline-offset-4"
-                >
-                  {contact.phone.display}
-                </a>
-              </p>
-            </div>
-          </article>
-        ))}
         <SessionPrep />
         <p className="mt-8 max-w-2xl text-xs leading-6 text-muted-foreground">
           Чат с Thera бесплатен и не включает консультацию психолога. Переписка с Thera

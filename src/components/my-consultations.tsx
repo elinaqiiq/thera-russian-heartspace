@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { RescheduleForm } from "@/components/reschedule-form";
+import { findPsychologist, psychologistLabel } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { consultationStatuses, consultationTimeZone, meetingFormats } from "@/lib/consultations";
 import {
@@ -84,6 +85,7 @@ export function MyConsultations({ userId }: { userId: string }) {
       {Boolean(requests.data?.length) && (
         <ul className="mt-3 divide-y divide-border">
           {requests.data?.map((request) => {
+            const specialist = findPsychologist(request.specialist_id);
             const canCancel =
               request.status === "pending" ||
               (request.status === "confirmed" &&
@@ -92,6 +94,7 @@ export function MyConsultations({ userId }: { userId: string }) {
             return (
               <li key={request.id} className="py-3">
                 <p className="text-sm font-semibold">{consultationStatuses[request.status]}</p>
+                <p className="text-sm">Психолог: {psychologistLabel(request.specialist_id)}</p>
                 <p className="text-sm text-muted-foreground">
                   {request.requested_start
                     ? `${almatyDateTime.format(new Date(request.requested_start))} · Алматы`
@@ -147,7 +150,11 @@ export function MyConsultations({ userId }: { userId: string }) {
                       <a href="#journal-entries">Сделать заметку в дневнике</a>
                     </Button>
                     <Button asChild size="sm" variant="outline">
-                      <Link to="/psychologists" search={{ rebook: true }} hash="consultation">
+                      <Link
+                        to="/psychologists"
+                        search={specialist ? { specialist: specialist.id } : { rebook: true }}
+                        hash={specialist ? `booking-${specialist.id}` : "consultation"}
+                      >
                         Записаться повторно
                       </Link>
                     </Button>

@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 
 export function AuthPanel({
   booking = false,
+  bookingSpecialist,
   ownerArea,
 }: {
   booking?: boolean;
+  bookingSpecialist?: string | undefined;
   ownerArea?: "/booking-desk";
 }) {
   const router = useRouter();
@@ -20,8 +22,12 @@ export function AuthPanel({
   const [message, setMessage] = useState("");
   const [showResend, setShowResend] = useState(false);
   const emailField = useRef<HTMLInputElement>(null);
-  const accountPath = ownerArea ?? (booking ? "/journal?next=consultation" : "/journal");
-  const resetPath = booking ? "/reset-password?next=consultation" : "/reset-password";
+  const bookingQuery = booking
+    ? "?next=consultation" +
+      (bookingSpecialist ? `&specialist=${encodeURIComponent(bookingSpecialist)}` : "")
+    : "";
+  const accountPath = ownerArea ?? `/journal${bookingQuery}`;
+  const resetPath = `/reset-password${bookingQuery}`;
 
   function authError(error: unknown) {
     const code = typeof error === "object" && error && "code" in error ? error.code : null;

@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Check, RefreshCw, X } from "lucide-react";
 import { AuthPanel } from "@/components/auth-panel";
 import { useAuthState } from "@/components/auth-state";
+import { psychologistLabel } from "@/lib/site";
 import { PageIntro } from "@/components/site-shell";
 import { BookingDetailsForm } from "@/components/booking-details-form";
 import { Button } from "@/components/ui/button";
@@ -163,6 +164,7 @@ function BookingDesk({ userId }: { userId: string }) {
                 <p className="break-words font-semibold">
                   {booking.display_name || "Имя не указано"}
                 </p>
+                <p className="text-sm">Психолог: {psychologistLabel(booking.specialist_id)}</p>
                 {booking.email && (
                   <p className="break-all text-sm text-muted-foreground">{booking.email}</p>
                 )}

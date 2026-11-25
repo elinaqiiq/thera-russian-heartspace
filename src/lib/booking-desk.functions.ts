@@ -8,6 +8,7 @@ import { registryDatabase } from "./registry.functions";
 const bookingList = z.array(
   z.object({
     request_id: z.string().uuid(),
+    specialist_id: z.string(),
     status: z.enum(["pending", "confirmed", "declined", "cancelled", "completed", "no_show"]),
     display_name: z.string().nullable(),
     email: z.string().nullable(),

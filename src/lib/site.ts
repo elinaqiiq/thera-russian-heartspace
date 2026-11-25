@@ -15,7 +15,15 @@ export type Psychologist = {
 };
 export const psychologists: Psychologist[] = [
   {
+    id: "sovunya-ju",
+    telegramUsername: "sovunya_ju",
+    phone: { display: "+7 705 166 11 32", number: "+77051661132" },
+    durationMinutes: 60,
+    priceKzt: 10000,
+  },
+  {
     id: "elina-l-r",
+    name: "Элина",
     telegramUsername: "elina_l_r",
     phone: { display: "+7 (777) 012-56-48", number: "+77770125648" },
     durationMinutes: 60,
@@ -23,19 +31,14 @@ export const psychologists: Psychologist[] = [
   },
 ];
 
-export type PsychologistContact = Pick<Psychologist, "id" | "telegramUsername" | "phone">;
+export function findPsychologist(id: unknown) {
+  return psychologists.find((psychologist) => psychologist.id === id);
+}
 
-export const directPsychologistContacts: Array<
-  PsychologistContact & Pick<Psychologist, "priceKzt" | "durationMinutes">
-> = [
-  {
-    id: "sovunya-ju",
-    telegramUsername: "sovunya_ju",
-    phone: { display: "+7 705 166 11 32", number: "+77051661132" },
-    durationMinutes: 60,
-    priceKzt: 10000,
-  },
-];
+export function psychologistLabel(id: string) {
+  const psychologist = findPsychologist(id);
+  return psychologist ? (psychologist.name ?? `@${psychologist.telegramUsername}`) : "Психолог";
+}
 
 export function telegramChatUrl(username: string) {
   return `https://t.me/${username}`;

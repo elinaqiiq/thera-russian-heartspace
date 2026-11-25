@@ -4,18 +4,26 @@ import { useAuthState } from "@/components/auth-state";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { PageIntro } from "@/components/site-shell";
-import { pageHead } from "@/lib/site";
+import { findPsychologist, pageHead } from "@/lib/site";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => pageHead("Новый пароль", "Восстановление доступа к аккаунту TherapyAI."),
-  validateSearch: (search): { next?: "consultation" } =>
-    search["next"] === "consultation" ? { next: "consultation" } : {},
+  validateSearch: (search): { next?: "consultation"; specialist?: string } => {
+    if (search["next"] !== "consultation") return {};
+    const specialist = findPsychologist(search["specialist"]);
+    return specialist
+      ? { next: "consultation", specialist: specialist.id }
+      : { next: "consultation" };
+  },
   component: ResetPassword,
 });
 
 function ResetPassword() {
   const { ready, user, recoveryUserId } = useAuthState();
-  const booking = Route.useSearch().next === "consultation";
+  const { next, specialist } = Route.useSearch();
+  const booking = next === "consultation";
+  const bookingSearch = specialist ? { specialist } : { rebook: true as const };
+  const bookingHash = specialist ? `booking-${specialist}` : "consultation";
   const [password, setPassword] = useState("");
   const [state, setState] = useState<"idle" | "busy" | "error" | "saved">("idle");
   const canReset = Boolean(user && user.id === recoveryUserId);
@@ -47,7 +55,7 @@ function ResetPassword() {
             </p>
             <Button asChild variant="hero">
               {booking ? (
-                <Link to="/psychologists" hash="consultation">
+                <Link to="/psychologists" hash={bookingHash} search={bookingSearch}>
                   Вернуться к записи
                 </Link>
               ) : (
@@ -86,7 +94,9 @@ function ResetPassword() {
             Открой ссылку восстановления из письма. Если она устарела, вернись{" "}
             <Link
               to="/journal"
-              search={booking ? { next: "consultation" } : {}}
+              search={
+                booking ? { next: "consultation", ...(specialist ? { specialist } : {}) } : {}
+              }
               className="underline"
             >
               на страницу входа

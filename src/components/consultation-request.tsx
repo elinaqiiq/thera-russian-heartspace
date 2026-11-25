@@ -18,8 +18,12 @@ export function ConsultationRequest({
   if (!ready) return null;
   if (!user)
     return (
-      <p className="text-sm text-muted-foreground">
-        <Link to="/journal" search={{ next: "consultation" }} className="underline">
+      <p id={`booking-${specialistId}`} className="scroll-mt-24 text-sm text-muted-foreground">
+        <Link
+          to="/journal"
+          search={{ next: "consultation", specialist: specialistId }}
+          className="underline"
+        >
           Войди или зарегистрируйся
         </Link>{" "}
         для отправки заявки с сайта.
@@ -101,7 +105,11 @@ function RequestForm({
     );
 
   return (
-    <details open={initiallyOpen || undefined} className="border-t border-border pt-3">
+    <details
+      id={`booking-${specialistId}`}
+      open={initiallyOpen || undefined}
+      className="scroll-mt-24 border-t border-border pt-3"
+    >
       <summary className="cursor-pointer text-sm font-semibold">Оставить заявку на сайте</summary>
       <form className="mt-3 space-y-3" onSubmit={send}>
         <p className="text-sm text-muted-foreground">

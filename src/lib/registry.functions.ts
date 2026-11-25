@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { directPsychologistContacts, psychologists } from "./site";
+import { findPsychologist } from "./site";
 import type { ConsultationStatus, MeetingFormat, RescheduleStatus } from "./consultations";
 
 type ConsultationRequest = {
@@ -82,7 +82,7 @@ export const submitConsultationRequest = createServerFn({ method: "POST" })
       specialistId: z
         .string()
         .max(80)
-        .refine((id) => psychologists.some((p) => p.id === id)),
+        .refine((id) => Boolean(findPsychologist(id))),
       telegramUsername: z.union([
         z.string().regex(/^[a-zA-Z][a-zA-Z0-9_]{3,30}[a-zA-Z0-9]$/),
         z.literal(""),
@@ -126,7 +126,7 @@ export const listConsultationRequests = createServerFn({ method: "GET" })
     const { data, error } = await registryDatabase(context.supabase)
       .from("thera_consultation_requests")
       .select(
-        "id, created_at, requested_start, status, meeting_format, meeting_instructions, reschedule_start, reschedule_status",
+        "id, specialist_id, created_at, requested_start, status, meeting_format, meeting_instructions, reschedule_start, reschedule_status",
       )
       .eq("user_id", context.userId)
       .order("created_at", { ascending: false });
@@ -166,7 +166,7 @@ export const recordPsychologistVisit = createServerFn({ method: "POST" })
       specialistId: z
         .string()
         .max(80)
-        .refine((id) => [...psychologists, ...directPsychologistContacts].some((p) => p.id === id)),
+        .refine((id) => Boolean(findPsychologist(id))),
     }),
   )
   .handler(async ({ context, data }) => {

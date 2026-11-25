@@ -3,9 +3,9 @@ import { Send } from "lucide-react";
 import { useAuthState } from "@/components/auth-state";
 import { Button } from "@/components/ui/button";
 import { recordPsychologistVisit } from "@/lib/registry.functions";
-import { telegramBookingUrl, type PsychologistContact } from "@/lib/site";
+import { telegramBookingUrl, type Psychologist } from "@/lib/site";
 
-export function PsychologistTelegramLink({ specialist }: { specialist: PsychologistContact }) {
+export function PsychologistTelegramLink({ specialist }: { specialist: Psychologist }) {
   const { user } = useAuthState();
   const record = useServerFn(recordPsychologistVisit);
 

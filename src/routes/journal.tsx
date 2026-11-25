@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { createFileRoute, ClientOnly, Navigate } from "@tanstack/react-router";
 import { PageIntro } from "@/components/site-shell";
-import { pageHead } from "@/lib/site";
+import { findPsychologist, pageHead } from "@/lib/site";
 import { useAuthState } from "@/components/auth-state";
 import { AuthPanel } from "@/components/auth-panel";
 import { MyConsultations } from "@/components/my-consultations";
@@ -11,14 +11,22 @@ import { JournalEditor } from "@/components/journal-editor";
 export const Route = createFileRoute("/journal")({
   head: () =>
     pageHead("Личный кабинет", "Профиль TherapyAI, личный дневник и заявки на консультацию."),
-  validateSearch: (search): { next?: "consultation" } =>
-    search["next"] === "consultation" ? { next: "consultation" } : {},
+  validateSearch: (search): { next?: "consultation"; specialist?: string } => {
+    if (search["next"] !== "consultation") return {};
+    const specialist = findPsychologist(search["specialist"]);
+    return specialist
+      ? { next: "consultation", specialist: specialist.id }
+      : { next: "consultation" };
+  },
   component: Journal,
 });
 
 function Journal() {
   const { user, ready } = useAuthState();
-  const booking = Route.useSearch().next === "consultation";
+  const { next, specialist } = Route.useSearch();
+  const booking = next === "consultation";
+  const bookingSearch = specialist ? { specialist } : { rebook: true as const };
+  const bookingHash = specialist ? `booking-${specialist}` : "consultation";
   return (
     <>
       <PageIntro eyebrow="Твой аккаунт" title="Личный кабинет">
@@ -30,7 +38,7 @@ function Journal() {
             <p role="status">Проверяем вход…</p>
           ) : user ? (
             booking ? (
-              <Navigate to="/psychologists" hash="consultation" replace />
+              <Navigate to="/psychologists" hash={bookingHash} search={bookingSearch} replace />
             ) : (
               <div key={user.id} className="space-y-10">
                 <AccountProfile user={user} />
@@ -50,7 +58,7 @@ function Journal() {
               </div>
             )
           ) : (
-            <AuthPanel booking={booking} />
+            <AuthPanel booking={booking} bookingSpecialist={specialist} />
           )}
         </ClientOnly>
       </section>
