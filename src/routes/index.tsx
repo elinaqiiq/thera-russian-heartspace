@@ -1,13 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  BookOpen,
-  ClipboardList,
-  Heart,
-  MessageCircle,
-  Wind,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, Heart, MessageCircle } from "lucide-react";
+import { HomeCareGuide } from "@/components/home-care-guide";
 import { HomeHeroArtwork } from "@/components/home-hero-artwork";
 import { Button } from "@/components/ui/button";
 import { bookingSubmissionsEnabled, formatKzt, pageHead, psychologists } from "@/lib/site";
@@ -20,27 +13,6 @@ export const Route = createFileRoute("/")({
     ),
   component: Index,
 });
-
-const tools = [
-  {
-    to: "/practices",
-    icon: Wind,
-    title: "Дыхательные практики",
-    description: "Сделай паузу и попробуй дыхание по таймеру.",
-  },
-  {
-    to: "/journal",
-    icon: BookOpen,
-    title: "Дневник эмоций",
-    description: "Запиши, что чувствуешь, и возвращайся к своим заметкам.",
-  },
-  {
-    to: "/tests",
-    icon: ClipboardList,
-    title: "Опросники",
-    description: "Оцени тревогу, настроение и самочувствие.",
-  },
-] as const;
 
 function Index() {
   const specialist = psychologists[0];
@@ -68,36 +40,19 @@ function Index() {
               </Link>
             </Button>
           </div>
+          <a href="#care-guide" className="home-scroll-link">
+            <ArrowDown size={17} aria-hidden="true" /> Что можно попробовать
+          </a>
         </div>
         <HomeHeroArtwork />
       </section>
 
-      <section
-        className="container-site pb-14 pt-12 md:pb-20 md:pt-16"
-        aria-labelledby="tools-heading"
-      >
-        <h2 id="tools-heading" className="section-title mb-6">
-          Поддержка в своём темпе
-        </h2>
-        <div className="grid gap-3 md:grid-cols-3 md:gap-4">
-          {tools.map(({ to, icon: Icon, title, description }) => (
-            <Link key={to} to={to} className="home-tool">
-              <span className="feature-icon">
-                <Icon size={22} aria-hidden="true" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block font-bold">{title}</span>
-                <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
-                  {description}
-                </span>
-              </span>
-              <ArrowRight size={18} className="shrink-0 text-accent" aria-hidden="true" />
-            </Link>
-          ))}
-        </div>
-      </section>
+      <HomeCareGuide />
 
-      <section className="container-site pb-14 md:pb-20" aria-labelledby="consultation-heading">
+      <section
+        className="container-site home-scroll-reveal pb-14 md:pb-20"
+        aria-labelledby="consultation-heading"
+      >
         <div className="soft-card consultation-callout">
           <div>
             <span className="feature-icon mb-5">
@@ -129,7 +84,10 @@ function Index() {
         </div>
         <p className="mt-8 text-sm text-muted-foreground">
           Помог ли тебе сайт?{" "}
-          <Link to="/feedback" className="font-semibold text-foreground underline underline-offset-4">
+          <Link
+            to="/feedback"
+            className="font-semibold text-foreground underline underline-offset-4"
+          >
             Оставить обратную связь
           </Link>
         </p>
