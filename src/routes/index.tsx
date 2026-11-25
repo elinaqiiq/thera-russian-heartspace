@@ -128,6 +128,12 @@ function Index() {
             </Button>
           </div>
         </div>
+        <p className="mt-8 text-sm text-muted-foreground">
+          Помог ли тебе сайт?{" "}
+          <Link to="/feedback" className="font-semibold text-foreground underline underline-offset-4">
+            Оставить обратную связь
+          </Link>
+        </p>
       </section>
     </>
   );

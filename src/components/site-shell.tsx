@@ -90,6 +90,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <Link to="/support" className="hover:text-foreground">
             Поддержка и безопасность
           </Link>
+          <Link to="/feedback" className="hover:text-foreground">
+            Обратная связь
+          </Link>
         </div>
       </footer>
     </div>

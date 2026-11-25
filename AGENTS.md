@@ -34,3 +34,5 @@ use the editor.
 - Embed the existing hosted conversation in an iframe with a permanent external fallback link; do not proxy conversations or copy them into booking data.
 - Keep service availability in a shared browser-safe module; booking stays unavailable until confirmed specialist data and a real submission destination exist.
 - Keep breathing timing and questionnaire scoring in browser-safe wellbeing utilities with tests; run practices and transient questionnaire answers locally without saving health responses.
+- Keep every specialist ever listed in the shared directory with a bookable flag; public lists and new requests use bookable ones only, history labels use the full directory, so past requests never lose their specialist.
+- Anonymous feedback is insert-only for visitors; owners read it through a security-definer function gated by the existing registry admin table, never by plain sign-in.

@@ -12,7 +12,7 @@ export function AuthPanel({
 }: {
   booking?: boolean;
   bookingSpecialist?: string | undefined;
-  ownerArea?: "/booking-desk";
+  ownerArea?: "/booking-desk" | "/feedback-results";
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup" | "reset">("login");

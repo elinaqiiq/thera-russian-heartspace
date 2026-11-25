@@ -193,6 +193,30 @@ export type Database = {
         }
         Relationships: []
       }
+      thera_site_feedback: {
+        Row: {
+          created_at: string
+          disliked: string
+          helped: string
+          id: string
+          improve: string
+        }
+        Insert: {
+          created_at?: string
+          disliked?: string
+          helped: string
+          id?: string
+          improve?: string
+        }
+        Update: {
+          created_at?: string
+          disliked?: string
+          helped?: string
+          id?: string
+          improve?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       thera_crm_bookings: {
@@ -234,6 +258,7 @@ export type Database = {
         Args: { approve: boolean; expected_start: string; request_id: string }
         Returns: string
       }
+      thera_feedback_list: { Args: never; Returns: Json }
       thera_premium_preview_access: {
         Args: { consume?: boolean }
         Returns: string

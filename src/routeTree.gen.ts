@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BookingDeskRouteImport } from './routes/booking-desk'
+import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as FeedbackResultsRouteImport } from './routes/feedback-results'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as PracticesRouteImport } from './routes/practices'
@@ -31,6 +33,16 @@ const IndexRoute = IndexRouteImport.update({
 const BookingDeskRoute = BookingDeskRouteImport.update({
   id: '/booking-desk',
   path: '/booking-desk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedbackResultsRoute = FeedbackResultsRouteImport.update({
+  id: '/feedback-results',
+  path: '/feedback-results',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -92,6 +104,8 @@ const ApiExcelSyncRoute = ApiExcelSyncRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/booking-desk': typeof BookingDeskRoute
+  '/feedback': typeof FeedbackRoute
+  '/feedback-results': typeof FeedbackResultsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
@@ -107,6 +121,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/booking-desk': typeof BookingDeskRoute
+  '/feedback': typeof FeedbackRoute
+  '/feedback-results': typeof FeedbackResultsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
@@ -123,6 +139,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/booking-desk': typeof BookingDeskRoute
+  '/feedback': typeof FeedbackRoute
+  '/feedback-results': typeof FeedbackResultsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/journal': typeof JournalRoute
   '/practices': typeof PracticesRoute
@@ -140,6 +158,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/booking-desk'
+    | '/feedback'
+    | '/feedback-results'
     | '/how-it-works'
     | '/journal'
     | '/practices'
@@ -155,6 +175,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/booking-desk'
+    | '/feedback'
+    | '/feedback-results'
     | '/how-it-works'
     | '/journal'
     | '/practices'
@@ -170,6 +192,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/booking-desk'
+    | '/feedback'
+    | '/feedback-results'
     | '/how-it-works'
     | '/journal'
     | '/practices'
@@ -186,6 +210,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BookingDeskRoute: typeof BookingDeskRoute
+  FeedbackRoute: typeof FeedbackRoute
+  FeedbackResultsRoute: typeof FeedbackResultsRoute
   HowItWorksRoute: typeof HowItWorksRoute
   JournalRoute: typeof JournalRoute
   PracticesRoute: typeof PracticesRoute
@@ -213,6 +239,20 @@ declare module '@tanstack/react-router' {
       path: '/booking-desk'
       fullPath: '/booking-desk'
       preLoaderRoute: typeof BookingDeskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feedback-results': {
+      id: '/feedback-results'
+      path: '/feedback-results'
+      fullPath: '/feedback-results'
+      preLoaderRoute: typeof FeedbackResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -298,6 +338,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BookingDeskRoute: BookingDeskRoute,
+  FeedbackRoute: FeedbackRoute,
+  FeedbackResultsRoute: FeedbackResultsRoute,
   HowItWorksRoute: HowItWorksRoute,
   JournalRoute: JournalRoute,
   PracticesRoute: PracticesRoute,

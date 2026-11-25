@@ -1,5 +1,5 @@
 import type { Registry } from "./registry";
-import { psychologists } from "./site";
+import { specialistDirectory } from "./site";
 
 const almatyDate = new Intl.DateTimeFormat("ru-RU", {
   dateStyle: "short",
@@ -50,7 +50,7 @@ export async function buildRegistryWorkbook({ users, requests, visits }: Registr
           user_id,
           email,
           telegram_username ? "@" + telegram_username : null,
-          psychologists.find((p) => p.id === specialist_id)?.telegramUsername ?? specialist_id,
+          specialistDirectory.find((p) => p.id === specialist_id)?.telegramUsername ?? specialist_id,
           timestamp(created_at),
         ]),
       ],
@@ -65,7 +65,7 @@ export async function buildRegistryWorkbook({ users, requests, visits }: Registr
           id,
           user_id,
           email,
-          psychologists.find((p) => p.id === specialist_id)?.telegramUsername ?? specialist_id,
+          specialistDirectory.find((p) => p.id === specialist_id)?.telegramUsername ?? specialist_id,
           timestamp(created_at),
         ]),
       ],

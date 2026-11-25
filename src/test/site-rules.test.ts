@@ -3,6 +3,9 @@ import {
   bookingSubmissionsEnabled,
   formatKzt,
   psychologists,
+  specialistDirectory,
+  findPsychologist,
+  psychologistLabel,
   THERA_CHAT_URL,
   telegramChatUrl,
   telegramBookingUrl,
@@ -15,10 +18,16 @@ describe("TherapyAI rules", () => {
     expect(THERA_CHAT_URL).toBe(
       "https://vdk-viber-runtime-prod.bot.botpress.host/edge/?botId=7ad7759a-ed1b-49d9-83c6-6555daa01224",
     ));
-  it("lists both bookable psychologists in the requested order with the same hourly rate", () => {
+  it("lists only Юля publicly while keeping Элина's name for past requests", () => {
+    expect(psychologists.map((p) => [p.id, p.name])).toEqual([["sovunya-ju", "Юля"]]);
+    expect(findPsychologist("elina-l-r")).toBeUndefined();
+    expect(psychologistLabel("elina-l-r")).toBe("Элина");
+    expect(psychologistLabel("sovunya-ju")).toBe("Юля");
+  });
+  it("keeps the full specialist directory terms unchanged", () => {
     expect(bookingSubmissionsEnabled).toBe(true);
     expect(
-      psychologists.map((specialist) => [
+      specialistDirectory.map((specialist) => [
         specialist.id,
         telegramChatUrl(specialist.telegramUsername),
         specialist.phone.number,
@@ -47,4 +56,18 @@ describe("TherapyAI rules", () => {
   it("charges consultations separately", () =>
     expect(servicePricing.consultationIncluded).toBe(false));
   it("formats prices in tenge", () => expect(formatKzt(15000)).toBe("15 000 ₸"));
+});
+
+import { feedbackSchema } from "@/lib/feedback";
+describe("feedback form rules", () => {
+  it("requires a yes/partial/no answer", () => {
+    expect(feedbackSchema.safeParse({ improve: "", disliked: "" }).success).toBe(false);
+    expect(feedbackSchema.safeParse({ helped: "maybe", improve: "", disliked: "" }).success).toBe(false);
+    expect(feedbackSchema.safeParse({ helped: "partial", improve: "", disliked: "" }).success).toBe(true);
+  });
+  it("accepts only the three answer fields and limits text length", () => {
+    const parsed = feedbackSchema.parse({ helped: "yes", improve: "a", disliked: "b", name: "x" });
+    expect(Object.keys(parsed).sort()).toEqual(["disliked", "helped", "improve"]);
+    expect(feedbackSchema.safeParse({ helped: "no", improve: "x".repeat(1001), disliked: "" }).success).toBe(false);
+  });
 });

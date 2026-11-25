@@ -13,9 +13,12 @@ export type Psychologist = {
   telegramUsername: string;
   phone: { display: string; number: string };
 };
-export const psychologists: Psychologist[] = [
+// Full directory: keeps names for past requests. Only `bookable` specialists appear publicly.
+export const specialistDirectory: (Psychologist & { bookable: boolean })[] = [
   {
     id: "sovunya-ju",
+    name: "Юля",
+    bookable: true,
     telegramUsername: "sovunya_ju",
     phone: { display: "+7 705 166 11 32", number: "+77051661132" },
     durationMinutes: 60,
@@ -24,6 +27,7 @@ export const psychologists: Psychologist[] = [
   {
     id: "elina-l-r",
     name: "Элина",
+    bookable: false,
     telegramUsername: "elina_l_r",
     phone: { display: "+7 (777) 012-56-48", number: "+77770125648" },
     durationMinutes: 60,
@@ -31,12 +35,22 @@ export const psychologists: Psychologist[] = [
   },
 ];
 
+export const psychologists: Psychologist[] = specialistDirectory
+  .filter((specialist) => specialist.bookable)
+  .map(({ bookable: _bookable, ...specialist }) => specialist);
+
+/** Bookable specialist only — use for new requests, links and search params. */
 export function findPsychologist(id: unknown) {
   return psychologists.find((psychologist) => psychologist.id === id);
 }
 
+/** Any specialist ever listed — use for history and owner views. */
+export function findAnySpecialist(id: unknown) {
+  return specialistDirectory.find((specialist) => specialist.id === id);
+}
+
 export function psychologistLabel(id: string) {
-  const psychologist = findPsychologist(id);
+  const psychologist = findAnySpecialist(id);
   return psychologist ? (psychologist.name ?? `@${psychologist.telegramUsername}`) : "Психолог";
 }
 
