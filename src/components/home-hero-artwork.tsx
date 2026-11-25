@@ -1,20 +1,16 @@
 import type { CSSProperties } from "react";
 
 const petals = [
-  // Start (%), size (px), fall duration (s), elapsed time (s), sideways drift (px).
-  [7, 11, 18, 9, -35],
-  [22, 15, 22, 14, 47],
-  [32, 8, 16, 5, -34],
-  [44, 12, 20, 12, 62],
-  [55, 9, 17, 6, -47],
-  [65, 17, 24, 15, 36],
-  [79, 10, 19, 6, -56],
-  [91, 14, 21, 13, -52],
-  [13, 7, 20, 3, 36],
-  [37, 10, 22, 16, 45],
-  [58, 8, 18, 10, -38],
-  [74, 12, 24, 8, 56],
-  [94, 9, 16, 8, -39],
+  // Start (%), size (px), fall duration (s), elapsed time (s), drift (px), tilt (deg).
+  [7, 28, 20, 7, -25, -28],
+  [22, 22, 24, 15, 37, 16],
+  [35, 18, 19, 6, -34, -9],
+  [48, 26, 25, 14, -13, 32],
+  [83, 19, 21, 6, 25, -21],
+  [92, 24, 23, 11, -50, 22],
+  [14, 16, 23, 20, 39, 9],
+  [42, 21, 26, 12, -44, -36],
+  [87, 17, 21, 17, 36, 31],
 ] as const;
 
 export function HomeHeroArtwork() {
@@ -31,7 +27,7 @@ export function HomeHeroArtwork() {
         </picture>
       </div>
       <div className="home-hero-petals" aria-hidden="true">
-        {petals.map(([start, size, duration, elapsed, drift]) => (
+        {petals.map(([start, size, duration, elapsed, drift, tilt]) => (
           <span
             className="home-hero-petal"
             key={start}
@@ -42,6 +38,7 @@ export function HomeHeroArtwork() {
                 "--petal-duration": `${duration}s`,
                 "--petal-delay": `-${elapsed}s`,
                 "--petal-drift": `${drift}px`,
+                "--petal-tilt": `${tilt}deg`,
               } as CSSProperties
             }
           >
